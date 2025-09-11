@@ -1,13 +1,78 @@
 import User from "../models/UserModel.js";
+import bcryptjs from "bcryptjs";
 
-const createUser = async (data) => {
+const createUser = async (req, res) => {
+
+    const { firstName, lastName, email, password } = req.body;
+
     try {
-        const newData = new User(data);
+
+        const validUser = await User.findOne({ email });
+
+        if (validUser) {
+            return res.status(200).json({
+                success: false,
+                message: "User with email address already exist",
+            });
+        }
+
+        const hashedPassword = bcryptjs.hashSync(password, 10);
+        const user = {
+            firstName, lastName, email, password: hashedPassword
+        }
+
+        const newData = new User(user);
         const savedData = await newData.save();
-        return { success: true, data: savedData };
+        const { password, ...others } = savedData._doc;
+
+        return res.status(201).json({
+            success: true,
+            message: "User created",
+            user: others
+        });
+
     } catch (error) {
         console.error('Error creating data: ', error);
         throw error;
+    }
+}
+
+const findUserByEmailAndPassword = async (req, res) => {
+
+    const { email, password } = req.body;
+
+    try {
+
+        const validUser = await User.findOne({ email });
+        if (!validUser) {
+            return res.json({
+                success: false,
+                message: "user not found",
+            });
+        }
+
+        const validPassword = bcryptjs.compareSync(req.body.password, validUser.password);
+        if (!validPassword) {
+            return res.status(200).json({
+                success: false,
+                message: "invalid password",
+            });
+        }
+
+        const { password, ...others } = validUser._doc;
+
+        res.json({
+            success: true,
+            message: "user found",
+            user: others
+        });
+
+    } catch (error) {
+        console.error(error);
+        res.json({
+            success: false,
+            message: "Error : " + error
+        })
     }
 }
 
@@ -45,4 +110,4 @@ const deleteUser = async (id) => {
     }
 }
 
-export {createUser, getUserById, updateUser, deleteUser}
+export { createUser, getUserById, updateUser, deleteUser, findUserByEmailAndPassword }
