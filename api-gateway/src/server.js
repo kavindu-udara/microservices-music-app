@@ -6,12 +6,21 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 3000;
 
+// app.use(
+//   "/api/db",
+//   createProxyMiddleware({
+//     target: process.env.DB_SERVICE_ROUTER, 
+//     changeOrigin: true,
+//     pathRewrite: { "^/api/db": "" }, // strip the prefix
+//   })
+// );
+
 app.use(
-  "/api/db",
+  "/api/music",
   createProxyMiddleware({
-    target: process.env.DB_SERVICE_ROUTER, 
+    target: process.env.MUSIC_SERVICE_ROUTER, 
     changeOrigin: true,
-    pathRewrite: { "^/api/db": "" }, // strip the prefix
+    pathRewrite: { "^/api/music": "" },
   })
 );
 
