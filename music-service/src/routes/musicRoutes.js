@@ -1,5 +1,5 @@
 import express from "express"
-import { createMusic, deleteMusicById, findMusicById, getMusic, updateMusicById } from "../controllers/musicController";
+import { createMusic, deleteMusicById, findMusicById, getMusic, updateMusicById } from "../controllers/musicController.js";
 
 const router = express.Router();
 
