@@ -3,9 +3,9 @@ import {createUser, updateUser, deleteUser, getUserById} from "../controllers/us
 
 const router = express.Router();
 
-router.post('/user', async (req, res) => {
+router.post('/', async (req, res) => {
   try {
-    const result = await createUser(data);
+    const result = await createUser(req.body);
     res.json(result);
   } catch (error) {
     res.status(500).json({ 
@@ -15,7 +15,7 @@ router.post('/user', async (req, res) => {
   }
 });
 
-router.get('/user/:id', async (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
     const result = await getUserById(req.params.id);
     res.json(result);
@@ -27,7 +27,7 @@ router.get('/user/:id', async (req, res) => {
   }
 });
 
-router.put('/user/:id', async (req, res) => {
+router.put('/:id', async (req, res) => {
   try {
     const result = await updateUser(req.params.id, req.body);
     res.json(result);
@@ -39,7 +39,7 @@ router.put('/user/:id', async (req, res) => {
   }
 });
 
-router.delete('/user/:id', async (req, res) => {
+router.delete('/:id', async (req, res) => {
   try {
     const result = await deleteUser(req.params.id);
     res.json(result);

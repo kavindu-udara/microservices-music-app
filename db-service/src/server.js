@@ -18,7 +18,7 @@ connectDB();
 app.use(cors());
 
 // Routes
-app.use('/api', userRoutes);
+app.use('/user', userRoutes);
 
 // Basic route
 app.get('/', (req, res) => {
@@ -38,11 +38,19 @@ app.use((err, req, res, next) => {
 });
 
 // 404 handler
-app.use(/(.*)/, (req, res) => {
-    res.status(404).json({
-        success: false,
-        error: 'Route not found'
-    });
+// app.use(/(.*)/, (req, res) => {
+//     res.status(404).json({
+//         success: false,
+//         error: 'Route not found'
+//     });
+// });
+// Health check endpoint
+
+app.get('/health', (req, res) => {
+  res.json({ 
+    status: 'OK', 
+    services: ['email', 'db', 'payment'] 
+  });
 });
 
 app.listen(port, () => {
