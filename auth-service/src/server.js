@@ -16,6 +16,14 @@ app.use(cookieParser());
 // Routes
 app.use('/api', authRoutes);
 
+// Basic route
+app.get('/', (req, res) => {
+    res.json({
+        message: 'Auth Service API',
+        version: '1.0.0'
+    });
+});
+
 app.listen(port, () => {
   console.log(`Auth service running on port ${port}`);
 });

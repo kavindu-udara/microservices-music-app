@@ -8,6 +8,9 @@ services:
       - "8000:8000"
     environment:
       - NODE_ENV=development
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules   
     depends_on:
       - db-service
       - auth-service
@@ -55,6 +58,9 @@ services:
       - NODE_ENV=development
       - MONGODB_URI=mongodb://mongodb:27017/music-app
       - JWT_SECRET=68c2ab426a83bddfc323647868c2ab426a83bddfc3236478
+    volumes:
+      - ./db-service:/app 
+      - /app/node_modules 
     networks:
       - microservices-network
     depends_on:
@@ -84,6 +90,9 @@ services:
       - PORT=3004
       - DB_SERVICE_ROUTER=http://db-service:3002
       - JWT_SECRET=68c2ab426a83bddfc323647868c2ab426a83bddfc3236478
+    volumes:
+      - ./auth-service:/app 
+      - /app/node_modules 
     networks:
       - microservices-network
     depends_on:
@@ -98,6 +107,9 @@ services:
       - NODE_ENV=development
       - PORT=3005
       - DB_SERVICE_ROUTER=http://db-service:3002
+    volumes:
+      - ./music-service:/app 
+      - /app/node_modules 
     networks:
       - microservices-network
     depends_on:

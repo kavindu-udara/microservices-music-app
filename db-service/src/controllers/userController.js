@@ -16,7 +16,7 @@ const createUser = async (req, res) => {
             });
         }
 
-        const hashedPassword = bcryptjs.hashSync(password, 10);
+        const hashedPassword = bcryptjs.hashSync(req.body.password, 10);
         const user = {
             firstName, lastName, email, password: hashedPassword
         }

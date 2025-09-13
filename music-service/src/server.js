@@ -14,6 +14,14 @@ const port = process.env.PORT || 3005;
 app.use('/music', musicRoutes);
 app.use('/artist', artistRoutes);
 
+// Basic route
+app.get('/', (req, res) => {
+    res.json({
+        message: 'Music Service API',
+        version: '1.0.0'
+    });
+});
+
 app.listen(port, () => {
   console.log(`Music service running on port ${port}`);
 });
