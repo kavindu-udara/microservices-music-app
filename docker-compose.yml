@@ -1,5 +1,18 @@
 
 services:
+
+  # frontend
+  frontend: 
+    build: ./frontend
+    ports:
+      - "8000:8000"
+    environment:
+      - NODE_ENV=development
+    depends_on:
+      - db-service
+      - auth-service
+      - music-service
+
   # API Gateway
   # api-gateway:
   #   build: ./api-gateway
@@ -40,7 +53,7 @@ services:
       - "3002:3002"
     environment:
       - NODE_ENV=development
-      - MONGODB_URI=mongodb://localhost:27017/?appName=music-app
+      - MONGODB_URI=mongodb://mongodb:27017/music-app
       - JWT_SECRET=68c2ab426a83bddfc323647868c2ab426a83bddfc3236478
     networks:
       - microservices-network
@@ -68,8 +81,13 @@ services:
       - "3004:3004"
     environment:
       - NODE_ENV=development
+      - PORT=3004
+      - DB_SERVICE_ROUTER=http://db-service:3002
+      - JWT_SECRET=68c2ab426a83bddfc323647868c2ab426a83bddfc3236478
     networks:
       - microservices-network
+    depends_on:
+      - db-service
 
   # Auth service
   music-service: 
@@ -78,8 +96,12 @@ services:
       - "3005:3005"
     environment:
       - NODE_ENV=development
+      - PORT=3005
+      - DB_SERVICE_ROUTER=http://db-service:3002
     networks:
       - microservices-network
+    depends_on:
+      - db-service
 
   # RabbitMQ Service
   # rabbitmq:
