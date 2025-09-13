@@ -1,37 +1,37 @@
 
 services:
   # API Gateway
-  api-gateway:
-    build: ./api-gateway
-    ports:
-      - "3000:3000"
-    environment:
-      - NODE_ENV=development
-      - EMAIL_SERVICE_URL=http://email-service:3001
-      - DB_SERVICE_URL=http://db-service:3002
-      - PAYMENT_SERVICE_URL=http://payment-service:3003
-      - AUTH_SERVICE_URL=http://auth-service:3004
-      - MUSIC_SERVICE_URL=http://music-service:3005
-    networks:
-      - microservices-network
-    depends_on:
-      - email-service
-      - db-service
-      - payment-service
+  # api-gateway:
+  #   build: ./api-gateway
+  #   ports:
+  #     - "3000:3000"
+  #   environment:
+  #     - NODE_ENV=development
+  #     - EMAIL_SERVICE_URL=http://email-service:3001
+  #     - DB_SERVICE_URL=http://db-service:3002
+  #     - PAYMENT_SERVICE_URL=http://payment-service:3003
+  #     - AUTH_SERVICE_URL=http://auth-service:3004
+  #     - MUSIC_SERVICE_URL=http://music-service:3005
+  #   networks:
+  #     - microservices-network
+  #   depends_on:
+  #     - email-service
+  #     - db-service
+  #     - payment-service
 
   # Email Service
-  email-service:
-    build: ./email-service
-    ports:
-      - "3001:3001"
-    environment:
-      - NODE_ENV=development
-      - RABBITMQ_URL=amqp://rabbitmq:5672
-      - QUEUE_NAME=email_queue
-    networks:
-      - microservices-network
-    depends_on:
-      - rabbitmq
+  # email-service:
+  #   build: ./email-service
+  #   ports:
+  #     - "3001:3001"
+  #   environment:
+  #     - NODE_ENV=development
+  #     - RABBITMQ_URL=amqp://rabbitmq:5672
+  #     - QUEUE_NAME=email_queue
+  #   networks:
+  #     - microservices-network
+  #   depends_on:
+  #     - rabbitmq
 
   # Database Service
   db-service:
@@ -40,27 +40,26 @@ services:
       - "3002:3002"
     environment:
       - NODE_ENV=development
-      - MONGODB_URI=mongodb://mongodb:27017/microservices
-      - RABBITMQ_URL=amqp://rabbitmq:5672
+      - MONGODB_URI=mongodb://localhost:27017/?appName=music-app
+      - JWT_SECRET=68c2ab426a83bddfc323647868c2ab426a83bddfc3236478
     networks:
       - microservices-network
     depends_on:
       - mongodb
-      - rabbitmq
 
-  # Payment Service
-  payment-service:
-    build: ./payment-service
-    ports:
-      - "3003:3003"
-    environment:
-      - NODE_ENV=development
-      - RABBITMQ_URL=amqp://rabbitmq:5672
-      - STRIPE_SECRET_KEY=your_stripe_secret_key
-    networks:
-      - microservices-network
-    depends_on:
-      - rabbitmq
+  # Payment Service - not done yet
+  # payment-service:
+  #   build: ./payment-service
+  #   ports:
+  #     - "3003:3003"
+  #   environment:
+  #     - NODE_ENV=development
+  #     - RABBITMQ_URL=amqp://rabbitmq:5672
+  #     - STRIPE_SECRET_KEY=your_stripe_secret_key
+  #   networks:
+  #     - microservices-network
+  #   depends_on:
+  #     - rabbitmq
 
   # Auth service
   auth-service: 
@@ -83,17 +82,17 @@ services:
       - microservices-network
 
   # RabbitMQ Service
-  rabbitmq:
-    image: rabbitmq:3-management
-    ports:
-      - "5672:5672"   # AMQP protocol
-      - "15672:15672" # Management UI
-    networks:
-      - microservices-network
+  # rabbitmq:
+  #   image: rabbitmq:3-management
+  #   ports:
+  #     - "5672:5672"   # AMQP protocol
+  #     - "15672:15672" # Management UI
+  #   networks:
+  #     - microservices-network
 
   # MongoDB Service
   mongodb:
-    image: mongo:5
+    image: mongo:latest
     ports:
       - "27017:27017"
     volumes:
