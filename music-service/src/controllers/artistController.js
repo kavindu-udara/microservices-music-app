@@ -35,7 +35,7 @@ export const createArtist = async (req, res) => {
 export const getArtists = async (req, res) => {
 
     try {
-        console.log("hello")
+        
         const response = await axios.get(`${process.env.DB_SERVICE_ROUTER}/artist`);
 
         if (!response.data.success) {

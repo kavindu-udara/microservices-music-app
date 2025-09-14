@@ -3,7 +3,7 @@ import { createArtist, getAllArtists } from "../controllers/artistController.js"
 
 const router = express.Router();
 
-router.post('/', createArtist);
 router.get('/', getAllArtists);
+router.post('/', createArtist);
 
 export default router;

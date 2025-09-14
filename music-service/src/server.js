@@ -11,8 +11,8 @@ app.use(express.json());
 
 const port = process.env.PORT || 3005;
 
-app.use('/', musicRoutes);
 app.use('/artist', artistRoutes);
+app.use('/', musicRoutes);
 
 // Basic route
 app.get('/about', (req, res) => {

@@ -13,11 +13,12 @@ type ArtistType = {
 
 const ArtistPage = () => {
 
-    const [data, setData] = useState<ArtistType | null>(null);
+    const [data, setData] = useState<ArtistType[] | null>(null);
 
     useEffect(() => {
-        apiClient.get("/music/artist").then(response => {
+        apiClient.get("/music/artist/get-all").then(response => {
             console.log(response);
+            setData(response.data.artists);
         }).catch(err => {
             console.error(err);
         })
@@ -28,7 +29,21 @@ const ArtistPage = () => {
             <div>
                 <Button>Create artist</Button>
             </div>
-            ArtistPage
+            {
+                !data ? (
+                    <div>
+                        artists not available
+                    </div>
+                ) : (
+                    <div>
+                        {data.map((artist, index) => (
+                            <div key={index}>
+                                {artist.name}
+                            </div>
+                        ))}
+                    </div>
+                )
+            }
         </div>
     )
 }
