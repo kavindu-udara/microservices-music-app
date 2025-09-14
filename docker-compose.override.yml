@@ -4,6 +4,7 @@ services:
   # frontend
   frontend: 
     build: ./frontend
+    image: ""
     ports:
       - "8000:8000"
     environment:
@@ -11,6 +12,15 @@ services:
     volumes:
       - ./frontend:/app
       - /app/node_modules   
+    develop:
+      watch:
+        - path: ./frontend/package.json
+          action: rebuild  
+        - path: ./frontend/package-lock.json
+          action: rebuild
+        - path: ./frontend
+          target: /app
+          action: sync
     depends_on:
       - db-service
       - auth-service
@@ -52,6 +62,7 @@ services:
   # Database Service
   db-service:
     build: ./db-service
+    image: ""
     ports:
       - "3002:3002"
     environment:
@@ -61,6 +72,15 @@ services:
     volumes:
       - ./db-service:/app 
       - /app/node_modules 
+    develop:
+      watch:
+        - path: ./db-service/package.json
+          action: rebuild
+        - path: ./db-service/package-lock.json
+          action: rebuild
+        - path: ./db-service
+          target: /app
+          action: sync
     networks:
       - microservices-network
     depends_on:
@@ -83,6 +103,7 @@ services:
   # Auth service
   auth-service: 
     build: ./auth-service
+    image: ""
     ports: 
       - "3004:3004"
     environment:
@@ -93,6 +114,15 @@ services:
     volumes:
       - ./auth-service:/app 
       - /app/node_modules 
+    develop:
+      watch:
+        - path: ./auth-service/package.json
+          action: rebuild
+        - path: ./auth-service/package-lock.json
+          action: rebuild
+        - path: ./auth-service
+          target: /app
+          action: sync
     networks:
       - microservices-network
     depends_on:
@@ -101,6 +131,7 @@ services:
   # Auth service
   music-service: 
     build: ./music-service
+    image: ""
     ports: 
       - "3005:3005"
     environment:
@@ -110,6 +141,15 @@ services:
     volumes:
       - ./music-service:/app 
       - /app/node_modules 
+    develop:
+      watch:
+        - path: ./music-service/package.json
+          action: rebuild
+        - path: ./music-service/package-lock.json
+          action: rebuild
+        - path: ./music-service
+          target: /app
+          action: sync
     networks:
       - microservices-network
     depends_on:

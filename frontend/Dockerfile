@@ -1,25 +1,17 @@
-# inherit from a existing image to add the functionality
 FROM node:20-alpine3.18
 
-# RUN addgroup app && adduser -S -G app app
-# USER app
-
-# Set the working directory and assign ownership to the non-root user
 WORKDIR /app
 
-# Copy the package.json and package-lock.json files into the image.
+# Copy only package.json + lock first (better layer caching)
 COPY package*.json ./
 
-# Install the dependencies.
+# Install deps
 RUN npm install
 
-# Copy the rest of the source files into the image.
+# Copy rest of the source
 COPY . .
 
 ENV PORT=8000
-
-# Expose the port that the application listens on.
 EXPOSE 8000
 
-# Run the application.
-CMD npm run dev
+CMD ["npm", "run", "dev"]

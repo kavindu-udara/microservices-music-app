@@ -11,7 +11,16 @@ services:
       - NODE_ENV=development
     volumes:
       - ./frontend:/app
-      - /app/node_modules   
+      - /app/node_modules  
+    develop:
+      watch:
+        - path: ./frontend/package.json
+          action: rebuild  
+        - path: ./frontend/package-lock.json
+          action: rebuild
+        - path: ./frontend
+          target: /app
+          action: sync 
     depends_on:
       - db-service
       - auth-service
@@ -63,6 +72,15 @@ services:
     volumes:
       - ./db-service:/app 
       - /app/node_modules 
+    develop:
+      watch:
+        - path: ./db-service/package.json
+          action: rebuild
+        - path: ./db-service/package-lock.json
+          action: rebuild
+        - path: ./db-service
+          target: /app
+          action: sync
     networks:
       - microservices-network
     depends_on:
@@ -96,6 +114,15 @@ services:
     volumes:
       - ./auth-service:/app 
       - /app/node_modules 
+    develop:
+      watch:
+        - path: ./auth-service/package.json
+          action: rebuild
+        - path: ./auth-service/package-lock.json
+          action: rebuild
+        - path: ./auth-service
+          target: /app
+          action: sync
     networks:
       - microservices-network
     depends_on:
@@ -114,6 +141,15 @@ services:
     volumes:
       - ./music-service:/app 
       - /app/node_modules 
+    develop:
+      watch:
+        - path: ./music-service/package.json
+          action: rebuild
+        - path: ./music-service/package-lock.json
+          action: rebuild
+        - path: ./music-service
+          target: /app
+          action: sync
     networks:
       - microservices-network
     depends_on:
