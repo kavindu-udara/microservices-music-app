@@ -4,6 +4,7 @@ services:
   # frontend
   frontend: 
     build: ./frontend
+    image: my-dockerhub-username/frontend
     ports:
       - "8000:8000"
     environment:
@@ -52,6 +53,7 @@ services:
   # Database Service
   db-service:
     build: ./db-service
+    image: my-dockerhub-username/db-service
     ports:
       - "3002:3002"
     environment:
@@ -83,6 +85,7 @@ services:
   # Auth service
   auth-service: 
     build: ./auth-service
+    image: my-dockerhub-username/auth-service 
     ports: 
       - "3004:3004"
     environment:
@@ -101,6 +104,7 @@ services:
   # Auth service
   music-service: 
     build: ./music-service
+    image: my-dockerhub-username/music-service 
     ports: 
       - "3005:3005"
     environment:
