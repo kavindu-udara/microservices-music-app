@@ -15,7 +15,7 @@ jobs:
       DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
     steps:
-      # 1. Checkout repo
+      # 1. Checkout repository
       - uses: actions/checkout@v4
 
       # 2. Set up Docker Buildx
@@ -29,7 +29,7 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-      # 4. Verify Dockerfiles exist for all services
+      # 4. Verify Dockerfiles exist
       - name: Verify Dockerfiles
         run: |
           SERVICES=("frontend" "auth-service" "music-service" "db-service")
@@ -41,26 +41,12 @@ jobs:
             fi
           done
 
-      # 5. Build all services via docker-compose and tag with Git SHA
+      # 5. Build all services via docker-compose
       - name: Build Docker Compose services
         run: |
-          SHA=$(git rev-parse --short HEAD)
-          docker compose -f docker-compose.yml build
-          # Tag each service image with Docker Hub username and Git SHA
-          SERVICES=("frontend" "auth-service" "music-service" "db-service")
-          for SERVICE in "${SERVICES[@]}"; do
-            IMAGE_NAME="${DOCKER_HUB_USERNAME}/${SERVICE}:${SHA}"
-            echo "🔨 Tagging $SERVICE -> $IMAGE_NAME"
-            docker tag "${SERVICE}_service" "$IMAGE_NAME" || true
-          done
+          docker compose -f docker-compose.yml build --pull
 
-      # 6. Push all tagged images to Docker Hub
-      - name: Push Docker images
+      # 6. Push all services to Docker Hub
+      - name: Push Docker Compose services
         run: |
-          SHA=$(git rev-parse --short HEAD)
-          SERVICES=("frontend" "auth-service" "music-service" "db-service")
-          for SERVICE in "${SERVICES[@]}"; do
-            IMAGE_NAME="${DOCKER_HUB_USERNAME}/${SERVICE}:${SHA}"
-            echo "🚀 Pushing $IMAGE_NAME"
-            docker push "$IMAGE_NAME"
-          done
+          docker compose -f docker-compose.yml push
