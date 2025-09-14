@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/card"
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
 
 const LoginPage = () => {
     return (
@@ -19,10 +20,10 @@ const LoginPage = () => {
                 <CardDescription>Enter your login details</CardDescription>
             </CardHeader>
             <CardContent className='flex flex-col gap-3'>
-                <label>Email</label>
-                <Input/>
-                <label>Password</label>
-                <Input/>
+                <Label>Email</Label>
+                <Input type='email'/>
+                <Label>Password</Label>
+                <Input type='password'/>
             </CardContent>
             <CardFooter>
                 <Button className='w-full'>Login</Button>

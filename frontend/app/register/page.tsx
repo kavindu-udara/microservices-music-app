@@ -1,7 +1,6 @@
 import React from 'react'
 import {
     Card,
-    CardAction,
     CardContent,
     CardDescription,
     CardFooter,
@@ -10,6 +9,7 @@ import {
 } from "@/components/ui/card"
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import { Label } from '@/components/ui/label'
 
 const page = () => {
     return (
@@ -20,16 +20,16 @@ const page = () => {
             </CardHeader>
             <CardContent className='flex flex-col gap-3'>
                 <div className='grid grid-cols-2 gap-3'>
-                    <label>First Name</label>
-                    <label>Last Name</label>
+                    <Label>First Name</Label>
+                    <Label>Last Name</Label>
                     <Input type='text' />
                     <Input type='text' />
                 </div>
-                <label>Email</label>
+                <Label>Email</Label>
                 <Input type='email' />
-                <label>Password</label>
+                <Label>Password</Label>
                 <Input type='password' />
-                <label>Comfirm Password</label>
+                <Label>Comfirm Password</Label>
                 <Input />
             </CardContent>
             <CardFooter>
