@@ -4,6 +4,7 @@ import cors from "cors";
 import connectDB from "./config/database.js";
 import userRoutes from './routes/userRoutes.js';
 import artistRoutes from "./routes/artistRoutes.js";
+import musicRoutes from "./routes/musicRouter.js";
 
 dotenv.config();
 
@@ -21,6 +22,7 @@ app.use(cors());
 // Routes
 app.use('/user', userRoutes);
 app.use('/artist', artistRoutes);
+app.use('/music', musicRoutes);
 
 // Basic route
 app.get('/', (req, res) => {

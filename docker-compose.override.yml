@@ -1,0 +1,142 @@
+
+services:
+
+  # frontend
+  frontend: 
+    build: ./frontend
+    ports:
+      - "8000:8000"
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules   
+    depends_on:
+      - db-service
+      - auth-service
+      - music-service
+
+  # API Gateway
+  # api-gateway:
+  #   build: ./api-gateway
+  #   ports:
+  #     - "3000:3000"
+  #   environment:
+  #     - NODE_ENV=development
+  #     - EMAIL_SERVICE_URL=http://email-service:3001
+  #     - DB_SERVICE_URL=http://db-service:3002
+  #     - PAYMENT_SERVICE_URL=http://payment-service:3003
+  #     - AUTH_SERVICE_URL=http://auth-service:3004
+  #     - MUSIC_SERVICE_URL=http://music-service:3005
+  #   networks:
+  #     - microservices-network
+  #   depends_on:
+  #     - email-service
+  #     - db-service
+  #     - payment-service
+
+  # Email Service
+  # email-service:
+  #   build: ./email-service
+  #   ports:
+  #     - "3001:3001"
+  #   environment:
+  #     - NODE_ENV=development
+  #     - RABBITMQ_URL=amqp://rabbitmq:5672
+  #     - QUEUE_NAME=email_queue
+  #   networks:
+  #     - microservices-network
+  #   depends_on:
+  #     - rabbitmq
+
+  # Database Service
+  db-service:
+    build: ./db-service
+    ports:
+      - "3002:3002"
+    environment:
+      - NODE_ENV=development
+      - MONGODB_URI=mongodb://mongodb:27017/music-app
+      - JWT_SECRET=68c2ab426a83bddfc323647868c2ab426a83bddfc3236478
+    volumes:
+      - ./db-service:/app 
+      - /app/node_modules 
+    networks:
+      - microservices-network
+    depends_on:
+      - mongodb
+
+  # Payment Service - not done yet
+  # payment-service:
+  #   build: ./payment-service
+  #   ports:
+  #     - "3003:3003"
+  #   environment:
+  #     - NODE_ENV=development
+  #     - RABBITMQ_URL=amqp://rabbitmq:5672
+  #     - STRIPE_SECRET_KEY=your_stripe_secret_key
+  #   networks:
+  #     - microservices-network
+  #   depends_on:
+  #     - rabbitmq
+
+  # Auth service
+  auth-service: 
+    build: ./auth-service
+    ports: 
+      - "3004:3004"
+    environment:
+      - NODE_ENV=development
+      - PORT=3004
+      - DB_SERVICE_ROUTER=http://db-service:3002
+      - JWT_SECRET=68c2ab426a83bddfc323647868c2ab426a83bddfc3236478
+    volumes:
+      - ./auth-service:/app 
+      - /app/node_modules 
+    networks:
+      - microservices-network
+    depends_on:
+      - db-service
+
+  # Auth service
+  music-service: 
+    build: ./music-service
+    ports: 
+      - "3005:3005"
+    environment:
+      - NODE_ENV=development
+      - PORT=3005
+      - DB_SERVICE_ROUTER=http://db-service:3002
+    volumes:
+      - ./music-service:/app 
+      - /app/node_modules 
+    networks:
+      - microservices-network
+    depends_on:
+      - db-service
+
+  # RabbitMQ Service
+  # rabbitmq:
+  #   image: rabbitmq:3-management
+  #   ports:
+  #     - "5672:5672"   # AMQP protocol
+  #     - "15672:15672" # Management UI
+  #   networks:
+  #     - microservices-network
+
+  # MongoDB Service
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - microservices-network
+
+volumes:
+  mongodb_data:
+
+networks:
+  microservices-network:
+    driver: bridge
