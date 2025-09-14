@@ -1,17 +1,13 @@
 "use client"
 import apiClient from '@/axios/apiClient';
+import CreateArtistDialog from '@/components/dialogs/CreateArtistDialog';
 import { Button } from '@/components/ui/button';
-import React, { useEffect, useState } from 'react'
-
-type ArtistType = {
-    name: String,
-    image: String,
-    description: String,
-    createdAt: String,
-    updatedAt: String
-}
+import { ArtistType } from '@/types/index.types';
+import React, { useEffect, useRef, useState } from 'react'
 
 const ArtistPage = () => {
+
+    const createDialogRef = useRef<HTMLButtonElement>(null);
 
     const [data, setData] = useState<ArtistType[] | null>(null);
 
@@ -25,9 +21,10 @@ const ArtistPage = () => {
     }, []);
 
     return (
+        <>
         <div className='flex flex-col gap-5 p-5'>
             <div>
-                <Button>Create artist</Button>
+                <Button onClick={() => createDialogRef.current?.click()}>Create artist</Button>
             </div>
             {
                 !data ? (
@@ -45,6 +42,8 @@ const ArtistPage = () => {
                 )
             }
         </div>
+        <CreateArtistDialog triggerBtnRef={createDialogRef} />
+        </>
     )
 }
 
