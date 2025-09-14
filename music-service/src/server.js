@@ -11,11 +11,11 @@ app.use(express.json());
 
 const port = process.env.PORT || 3005;
 
-app.use('/music', musicRoutes);
+app.use('/', musicRoutes);
 app.use('/artist', artistRoutes);
 
 // Basic route
-app.get('/', (req, res) => {
+app.get('/about', (req, res) => {
     res.json({
         message: 'Music Service API',
         version: '1.0.0'

@@ -31,3 +31,25 @@ export const createArtist = async (req, res) => {
     }
 
 }
+
+export const getArtists = async (req, res) => {
+
+    try {
+        console.log("hello")
+        const response = await axios.get(`${process.env.DB_SERVICE_ROUTER}/artist`);
+
+        if (!response.data.success) {
+            return res.status(500).json(response.data);
+        }
+
+        return res.status(200).json(response.data);
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            success: false,
+            message: "Server Error : " + error
+        });
+    }
+
+}

@@ -1,10 +1,17 @@
 import express from "express";
 import dotenv from "dotenv";
+import cors from "cors";
 import { createProxyMiddleware } from "http-proxy-middleware";
 
 dotenv.config();
 const app = express();
 const port = process.env.PORT || 3000;
+
+app.use(cors({
+  origin: process.env.CORS_ORIGIN,
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true // if you want to allow cookies/authorization headers
+}));
 
 // app.use(
 //   "/api/db",
