@@ -53,7 +53,7 @@ const CreateArtistDialog = ({ triggerBtnRef }: { triggerBtnRef: RefObject<HTMLBu
         formData.append("description", form.description);
         formData.append("image", image);
 
-        apiClient.post("/",
+        apiClient.post("/music/artist",
             formData
             , {
                 headers: {

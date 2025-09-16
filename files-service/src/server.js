@@ -10,7 +10,7 @@ app.use(express.json());
 
 const port = process.env.PORT || 3006;
 
-app.use('/file', fileRoutes);
+app.use('/', fileRoutes);
 
 // Basic route
 app.get('/about', (req, res) => {

@@ -1,27 +1,60 @@
 import axios from "axios";
+import multer from "multer";
+import FormData from "form-data";
+import fs from "fs";
 
 export const createArtist = async (req, res) => {
-    const { name, description, image } = req.body;
+    const { name, description } = req.body;
 
-    if(!name || !description || !image){
-        return res.status(500).json({
+    if (!name || !description || !req.file) {
+        return res.status(400).json({
             success: false,
-            message: "All fields are required" 
+            message: "Name, description and image are required"
         });
     }
 
     try {
-
-        const response = await axios.post(`${process.env.DB_SERVICE_ROUTER}/artist`, {
-            name, description, image
+        
+        const formData = new FormData();
+        formData.append("file", fs.createReadStream(req.file.path), {
+            filename: req.file.originalname,
+            contentType: req.file.mimetype
         });
 
-        if (!response.data.success) {
-            return res.status(500).json(response.data);
+
+        const fileResponse = await axios.post(
+            `${process.env.FILES_SERVICE_ROUTER}/upload`,
+            formData,
+            {
+                headers: {
+                    ...formData.getHeaders()
+                }
+            }
+        );
+
+        if (!fileResponse.data.filename) {
+            return res.status(500).json({
+                success: false,
+                message: "File service did not return a filename"
+            });
         }
 
-        return res.status(201).json(response.data);
+        const image = fileResponse.data.filename;
 
+        // 2. Save artist in DB Service
+        const dbResponse = await axios.post(
+            `${process.env.DB_SERVICE_ROUTER}/artist`,
+            { name, description, image }
+        );
+
+        if (!dbResponse.data.success) {
+            return res.status(500).json(dbResponse.data);
+        }
+
+        // 3. Cleanup temp file
+        fs.unlink(req.file.path, () => { });
+
+        return res.status(201).json(dbResponse.data);
     } catch (error) {
         console.log(error);
         return res.status(500).json({
@@ -35,7 +68,7 @@ export const createArtist = async (req, res) => {
 export const getArtists = async (req, res) => {
 
     try {
-        
+
         const response = await axios.get(`${process.env.DB_SERVICE_ROUTER}/artist`);
 
         if (!response.data.success) {
