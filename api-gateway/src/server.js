@@ -49,6 +49,15 @@ app.use(
   })
 );
 
+app.use(
+  "/api/file",
+  createProxyMiddleware({
+    target: process.env.FILES_SERVICE_ROUTER,
+    changeOrigin: true,
+    pathRewrite: { "^/api/file": "" },
+  })
+);
+
 // Health check
 app.get("/health", (req, res) => {
   res.json({
