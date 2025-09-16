@@ -56,3 +56,47 @@ export const uploadFile = (req, res) => {
         });
     });
 };
+
+export const getImage = async (req, res) => {
+    try {
+        const { filename } = req.params;
+        const baseDir = "data";
+
+        // Recursively search for the file in the images folder
+        const possibleDirs = [
+            path.join(baseDir, "images"),
+            path.join(baseDir, "images/users"),
+            path.join(baseDir, "images/artists"),
+        ];
+
+        let filePath = null;
+        for (const dir of possibleDirs) {
+            const candidate = path.join(dir, filename);
+            if (fs.existsSync(candidate)) {
+                filePath = candidate;
+                break;
+            }
+        }
+
+        if (!filePath) {
+            return res.status(404).json({ error: "Image not found" });
+        }
+
+        // Set correct content type from extension
+        const ext = path.extname(filePath).toLowerCase();
+        const mimeTypes = {
+            ".jpg": "image/jpeg",
+            ".jpeg": "image/jpeg",
+            ".png": "image/png",
+            ".gif": "image/gif",
+            ".webp": "image/webp"
+        };
+
+        res.setHeader("Content-Type", mimeTypes[ext] || "application/octet-stream");
+        return res.sendFile(path.resolve(filePath));
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ error: "Server error", details: err.message });
+    }
+};
+

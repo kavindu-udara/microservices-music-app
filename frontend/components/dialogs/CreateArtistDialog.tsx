@@ -19,7 +19,7 @@ type FormType = {
     description: string
 }
 
-const CreateArtistDialog = ({ triggerBtnRef }: { triggerBtnRef: RefObject<HTMLButtonElement | null> }) => {
+const CreateArtistDialog = ({ triggerBtnRef, successCallBack }: { triggerBtnRef: RefObject<HTMLButtonElement | null> , successCallBack : () => void }) => {
 
     const artistImageInputRef = useRef<HTMLInputElement>(null);
 
@@ -62,7 +62,15 @@ const CreateArtistDialog = ({ triggerBtnRef }: { triggerBtnRef: RefObject<HTMLBu
             }
         ).then(res => {
             console.log(res);
+            if(res.data.success){
+                toast.success("Artist created");
+                triggerBtnRef.current?.click();
+                successCallBack();
+                return;
+            }
+            toast.error(res.data.message);
         }).catch(err => {
+            toast.error("Artist create failed");
             console.error(err);
         });
 

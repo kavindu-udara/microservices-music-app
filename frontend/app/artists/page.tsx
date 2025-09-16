@@ -11,38 +11,42 @@ const ArtistPage = () => {
 
     const [data, setData] = useState<ArtistType[] | null>(null);
 
-    useEffect(() => {
+    const fetchArtists = () => {
         apiClient.get("/music/artist/get-all").then(response => {
             console.log(response);
             setData(response.data.artists);
         }).catch(err => {
             console.error(err);
         })
+    }
+
+    useEffect(() => {
+        fetchArtists();
     }, []);
 
     return (
         <>
-        <div className='flex flex-col gap-5 p-5'>
-            <div>
-                <Button onClick={() => createDialogRef.current?.click()}>Create artist</Button>
+            <div className='flex flex-col gap-5 p-5'>
+                <div>
+                    <Button onClick={() => createDialogRef.current?.click()}>Create artist</Button>
+                </div>
+                {
+                    !data ? (
+                        <div>
+                            artists not available
+                        </div>
+                    ) : (
+                        <div>
+                            {data.map((artist, index) => (
+                                <div key={index}>
+                                    {artist.name}
+                                </div>
+                            ))}
+                        </div>
+                    )
+                }
             </div>
-            {
-                !data ? (
-                    <div>
-                        artists not available
-                    </div>
-                ) : (
-                    <div>
-                        {data.map((artist, index) => (
-                            <div key={index}>
-                                {artist.name}
-                            </div>
-                        ))}
-                    </div>
-                )
-            }
-        </div>
-        <CreateArtistDialog triggerBtnRef={createDialogRef} />
+            <CreateArtistDialog triggerBtnRef={createDialogRef} successCallBack={fetchArtists} />
         </>
     )
 }
