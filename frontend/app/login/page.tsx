@@ -1,7 +1,7 @@
-import React from 'react';
+"use client"
+import React, { useState } from 'react';
 import {
     Card,
-    CardAction,
     CardContent,
     CardDescription,
     CardFooter,
@@ -11,8 +11,57 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
+import toast from 'react-hot-toast';
+import apiClient from '@/axios/apiClient';
+import { validateEmail } from '@/lib/validator';
+
+type FormType = {
+    email: string,
+    password: string
+}
 
 const LoginPage = () => {
+
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [form, setForm] = useState<FormType>({
+        email: "",
+        password: ""
+    });
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setForm({ ...form, [e.target.name]: e.target.value });
+    };
+
+    const handleLogin = () => {
+        if (!form.email || !form.password) {
+            toast.error("All fields are required");
+            return
+        }
+
+        if (!validateEmail(form.email)) {
+            toast.error("Invalid Email Type");
+            return
+        }
+
+        setIsLoading(true);
+        apiClient.post("/auth/login", {
+            email: form.email,
+            password: form.password
+        }).then(res => {
+            setIsLoading(false);
+            console.log(res);
+            if (res.data.success) {
+                toast.success("Login success");
+                return;
+            }
+            toast.error(res.data.message);
+        }).catch(err => {
+            setIsLoading(false);
+            console.error(err);
+            toast.error("Something went wrong please try again later");
+        });
+    }
+
     return (
         <Card className='w-lg'>
             <CardHeader>
@@ -21,12 +70,12 @@ const LoginPage = () => {
             </CardHeader>
             <CardContent className='flex flex-col gap-3'>
                 <Label>Email</Label>
-                <Input type='email'/>
+                <Input type='email' name='email' value={form.email} onChange={handleInputChange} />
                 <Label>Password</Label>
-                <Input type='password'/>
+                <Input type='password' name='password' value={form.password} onChange={handleInputChange} />
             </CardContent>
             <CardFooter>
-                <Button className='w-full'>Login</Button>
+                <Button className='w-full' onClick={handleLogin} disabled={isLoading} >{isLoading ? "Loading..." : "Login"}</Button>
             </CardFooter>
         </Card>
     )

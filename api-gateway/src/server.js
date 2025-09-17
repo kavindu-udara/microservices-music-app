@@ -23,6 +23,15 @@ app.use(cors({
 // );
 
 app.use(
+  "/api/auth",
+  createProxyMiddleware({
+    target: process.env.AUTH_SERVICE_ROUTER, 
+    changeOrigin: true,
+    pathRewrite: { "^/api/music": "" },
+  })
+);
+
+app.use(
   "/api/music",
   createProxyMiddleware({
     target: process.env.MUSIC_SERVICE_ROUTER, 

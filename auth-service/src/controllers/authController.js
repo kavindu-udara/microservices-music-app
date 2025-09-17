@@ -19,7 +19,7 @@ export const login = async (req, res) => {
             id: validUser._id,
         }, process.env.JWT_SECRET);
         
-        res.cookie('access_token', token, { httpOnly: true, sameSite: 'None', secure: true, maxAge: 24 * 60 * 60 * 10000 }).status(200).json({
+        return res.cookie('access_token', token, { httpOnly: true, sameSite: 'None', secure: true, maxAge: 24 * 60 * 60 * 10000 }).status(200).json({
             success: true,
             user: validUser,
             message: 'user logged in successfully',
@@ -48,7 +48,11 @@ export const register = async (req, res, next) => {
                 firstName, lastName, email, password
             });
             console.log(response.data);
-            return res.status(200).json(response.data);
+            return res.status(201).json({
+                success: true,
+                user: response.data,
+                message: "user created"
+            });
         } catch (error) {
             return res.status(500).json({
                 success: false,
