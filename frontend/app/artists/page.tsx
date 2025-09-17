@@ -1,5 +1,6 @@
 "use client"
 import apiClient from '@/axios/apiClient';
+import ArtistCard from '@/components/cards/ArtistCard';
 import CreateArtistDialog from '@/components/dialogs/CreateArtistDialog';
 import { Button } from '@/components/ui/button';
 import { ArtistType } from '@/types/index.types';
@@ -36,11 +37,9 @@ const ArtistPage = () => {
                             artists not available
                         </div>
                     ) : (
-                        <div>
+                        <div className='grid grid-cols-5'>
                             {data.map((artist, index) => (
-                                <div key={index}>
-                                    {artist.name}
-                                </div>
+                                <ArtistCard key={index} artist={artist} />
                             ))}
                         </div>
                     )
