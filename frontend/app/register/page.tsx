@@ -56,6 +56,7 @@ const page = () => {
             return;
         }
 
+        setIsLoading(true);
         apiClient.post("/auth/register", {
             firstName: form.firstName,
             lastName: form.lastName,
@@ -63,6 +64,7 @@ const page = () => {
             password: form.password
         }).then(res => {
             console.log(res);
+            setIsLoading(false);
             if (res.data.success) {
                 toast.success("Account created");
                 return;
@@ -71,6 +73,7 @@ const page = () => {
         }).catch(err => {
             console.error(err);
             toast.error("Something went wrong");
+            setIsLoading(false);
         })
 
     }
