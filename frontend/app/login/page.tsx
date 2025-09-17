@@ -14,6 +14,7 @@ import { Label } from '@/components/ui/label';
 import toast from 'react-hot-toast';
 import apiClient from '@/axios/apiClient';
 import { validateEmail } from '@/lib/validator';
+import { useRouter } from 'next/navigation';
 
 type FormType = {
     email: string,
@@ -21,6 +22,7 @@ type FormType = {
 }
 
 const LoginPage = () => {
+    const router = useRouter();
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [form, setForm] = useState<FormType>({
@@ -52,6 +54,7 @@ const LoginPage = () => {
             console.log(res);
             if (res.data.success) {
                 toast.success("Login success");
+                router.push("/");
                 return;
             }
             toast.error(res.data.message);

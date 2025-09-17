@@ -15,6 +15,7 @@ import toast from 'react-hot-toast'
 import { validateEmail } from '@/lib/validator'
 import apiClient from '@/axios/apiClient'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 type FormType = {
     firstName: string,
@@ -25,6 +26,8 @@ type FormType = {
 }
 
 const page = () => {
+
+    const router = useRouter();
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [form, setForm] = useState<FormType>({
@@ -67,6 +70,7 @@ const page = () => {
             setIsLoading(false);
             if (res.data.success) {
                 toast.success("Account created");
+                router.push("/");
                 return;
             }
             toast.error(res.data.message);
@@ -75,7 +79,6 @@ const page = () => {
             toast.error("Something went wrong");
             setIsLoading(false);
         })
-
     }
 
     return (
