@@ -2,6 +2,7 @@
 import apiClient from "@/axios/apiClient";
 import MusicCard from "@/components/cards/MusicCard";
 import CreateSongDialog from "@/components/dialogs/CreateSongDialog";
+import BottomPlayer from "@/components/players/BottomPlayer";
 import { Button } from "@/components/ui/button";
 import { ArtistType, SongType } from "@/types/index.types";
 import React, { useEffect, useRef, useState } from "react";
@@ -74,6 +75,8 @@ const SongsPage = () => {
         triggerBtnRef={createDialogTriggerRef}
         successCallBack={fetchSongs}
       />
+
+      <BottomPlayer/>
     </div>
   );
 };
