@@ -50,7 +50,7 @@ export const getMusic = async (req, res) => {
     const songs = await Music.find();
 
     if (!songs) {
-      return res.status(500).json({
+      return res.status(404).json({
         success: false,
         message: "Songs not available",
       });

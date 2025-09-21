@@ -1,5 +1,6 @@
 "use client"
 import apiClient from '@/axios/apiClient';
+import MusicCard from '@/components/cards/MusicCard';
 import CreateSongDialog from '@/components/dialogs/CreateSongDialog';
 import { Button } from '@/components/ui/button';
 import { ArtistType, SongType } from '@/types/index.types';
@@ -24,7 +25,7 @@ const SongsPage = () => {
   const fetchSongs = () => {
     apiClient.get("/music").then(response => {
       console.log(response);
-      setSongs(response.data.artists);
+      setSongs(response.data.songs);
     }).catch(err => {
       console.error(err);
     })
@@ -40,10 +41,13 @@ const SongsPage = () => {
       <Button onClick={() => createDialogTriggerRef.current?.click()}>Create Song</Button>
 
       {
-        songs ?
-          songs.map((song, index) => (
-            <div key={index}>{song.name}</div>
-          )) : (
+        songs ?(
+          <div className='grid grid-cols-5 gap-5 p-5'>
+          {songs.map((song, index) => (
+            <MusicCard key={index} song={song} />
+          ))}
+          </div> 
+          ): (
             <div>songs not available</div>
           )
       }

@@ -3,7 +3,7 @@ import fs from "fs";
 import { uploadFile } from "./fileController.js";
 
 export const createMusic = async (req, res) => {
-    console.log(req.body);
+  console.log(req.body);
   const { name, artistId } = req.body;
 
   if (!name || !artistId || !req.files.image || !req.files.songFile) {
@@ -14,7 +14,6 @@ export const createMusic = async (req, res) => {
   }
 
   try {
-
     // handle files upload
     const imageFileResponse = await uploadFile(req.files.image[0]);
     const songFileResponse = await uploadFile(req.files.songFile[0]);
@@ -55,8 +54,6 @@ export const createMusic = async (req, res) => {
 };
 
 export const getMusic = async (req, res) => {
-  // TODO : validations
-
   try {
     const response = await axios.get(`${process.env.DB_SERVICE_ROUTER}/music`);
     return res.status(200).json(response.data);
