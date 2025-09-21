@@ -1,5 +1,6 @@
 import { SongType } from "@/types/index.types";
 import React from "react";
+import { FaPlayCircle } from "react-icons/fa";
 
 const MusicCard = ({ song }: { song: SongType }) => {
   return (
@@ -11,7 +12,8 @@ const MusicCard = ({ song }: { song: SongType }) => {
           className="w-full"
         />
       </div>
-      <div className="px-5 py-3">
+      <div className="px-5 py-3 flex flex-row items-center gap-3">
+        <FaPlayCircle size={30}/>
         <div>{song.name}</div>
       </div>
     </div>
