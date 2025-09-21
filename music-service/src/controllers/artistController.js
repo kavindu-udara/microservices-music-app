@@ -2,6 +2,7 @@ import axios from "axios";
 import multer from "multer";
 import FormData from "form-data";
 import fs from "fs";
+import { uploadFile } from "./fileController.js";
 
 export const createArtist = async (req, res) => {
     const { name, description } = req.body;
@@ -22,15 +23,7 @@ export const createArtist = async (req, res) => {
         });
 
 
-        const fileResponse = await axios.post(
-            `${process.env.FILES_SERVICE_ROUTER}/upload`,
-            formData,
-            {
-                headers: {
-                    ...formData.getHeaders()
-                }
-            }
-        );
+        const fileResponse = uploadFile(req.file);
 
         if (!fileResponse.data.filename) {
             return res.status(500).json({
