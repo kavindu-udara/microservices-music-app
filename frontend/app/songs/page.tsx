@@ -44,7 +44,7 @@ const SongsPage = () => {
   }, []);
 
   return (
-    <div>
+    <div className="z-0 min-h-screen">
       <Button onClick={() => createDialogTriggerRef.current?.click()}>
         Create Song
       </Button>
