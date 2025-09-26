@@ -15,6 +15,8 @@ import toast from 'react-hot-toast';
 import apiClient from '@/axios/apiClient';
 import { validateEmail } from '@/lib/validator';
 import { useRouter } from 'next/navigation';
+import { useDispatch } from 'react-redux';
+import { setUser } from '@/store/authSlice';
 
 type FormType = {
     email: string,
@@ -23,6 +25,7 @@ type FormType = {
 
 const LoginPage = () => {
     const router = useRouter();
+    const dispatch = useDispatch();
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [form, setForm] = useState<FormType>({
@@ -45,6 +48,7 @@ const LoginPage = () => {
             return
         }
 
+        dispatch(setUser(null));
         setIsLoading(true);
         apiClient.post("/auth/login", {
             email: form.email,
@@ -53,8 +57,9 @@ const LoginPage = () => {
             setIsLoading(false);
             console.log(res);
             if (res.data.success) {
+                dispatch(setUser(res.data.user));
                 toast.success("Login success");
-                router.push("/");
+                router.push("/songs");
                 return;
             }
             toast.error(res.data.message);
