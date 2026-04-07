@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "tsx src/app.ts",
+    "dev": "tsx src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -18,7 +18,12 @@
     "typescript": "^6.0.2"
   },
   "dependencies": {
+    "@fastify/cors": "^11.2.0",
+    "@fastify/http-proxy": "^11.4.3",
+    "@fastify/jwt": "^10.0.0",
+    "@fastify/rate-limit": "^10.3.0",
     "@music/shared": "workspace:*",
-    "fastify": "^5.8.4"
+    "fastify": "^5.8.4",
+    "pino-pretty": "^13.1.3"
   }
 }
