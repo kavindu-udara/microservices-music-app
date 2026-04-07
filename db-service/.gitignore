@@ -1,6 +1,0 @@
-
-src/data/music/*
-!src/data/music/.gitkeep
-
-src/data/images/*
-!src/data/images/.gitkeep
