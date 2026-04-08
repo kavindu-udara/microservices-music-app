@@ -21,3 +21,5 @@ music-app/
     ├── docker/
     ├── k8s/             # (Optional) Helm/Kustomize manifests
     └── scripts/         # Bootstrap, seed, health checks
+
+> Project is still under development
