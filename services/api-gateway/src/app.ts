@@ -28,7 +28,7 @@ await app.register(jwt, {
 
 // 3. Auth hook
 app.decorate("authenticate", async (req: any, reply: any) => {
-  try {
+  try {3
     await req.jwtVerify();
   } catch (err: any) {
     reply.code(401).send({ error: "Unauthorized", message: err.message });
@@ -37,6 +37,7 @@ app.decorate("authenticate", async (req: any, reply: any) => {
 
 // 4. Register proxy routes
 for (const [prefix, service] of Object.entries(SERVICES)) {
+
   app.register(httpProxy, {
     upstream: service.url,
     prefix: `/${prefix}`,
@@ -46,6 +47,7 @@ for (const [prefix, service] of Object.entries(SERVICES)) {
       bodyTimeout: 30_000,
       headersTimeout: 10_000,
     },
+
     // Forward user context to downstream services
     rewriteRequestHeaders: (originalReq, headers) => {
       const user = (originalReq as any).user;
@@ -55,6 +57,7 @@ for (const [prefix, service] of Object.entries(SERVICES)) {
       }
       return headers;
     },
+
     // Handle downstream errors gracefully
     onError: (reply: any, error: any) => {
       app.log.error({ err: error, service: prefix }, "Proxy failed");
