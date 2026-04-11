@@ -18,8 +18,13 @@ await app.register(jwt, {
 
 // login
 app.register(loginRoutes);
+
 // register
 app.register(registerRoutes);
+
+app.get('/health', async (request, reply) => {
+  return { status: 'ok', timestamp: Date.now() };
+});
 
 const start = async () => {
   try {

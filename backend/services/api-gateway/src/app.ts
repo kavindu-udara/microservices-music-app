@@ -37,27 +37,14 @@ app.decorate("authenticate", async (req: any, reply: any) => {
 
 // 4. Register proxy routes
 for (const [prefix, service] of Object.entries(SERVICES)) {
-
   app.register(httpProxy, {
     upstream: service.url,
     prefix: `/${prefix}`,
-    rewritePrefix: "", // keeps /playlist/create -> /playlist/create
-    preHandler: service.requiresAuth ? [app.authenticate] : [],
+    rewritePrefix: "", 
     undici: {
       bodyTimeout: 30_000,
       headersTimeout: 10_000,
     },
-
-    // Forward user context to downstream services
-    rewriteRequestHeaders: (originalReq, headers) => {
-      const user = (originalReq as any).user;
-      if (user?.id) {
-        headers["x-user-id"] = user.id;
-        headers["x-user-role"] = user.role || "user";
-      }
-      return headers;
-    },
-
     // Handle downstream errors gracefully
     onError: (reply: any, error: any) => {
       app.log.error({ err: error, service: prefix }, "Proxy failed");
@@ -67,6 +54,7 @@ for (const [prefix, service] of Object.entries(SERVICES)) {
       });
     },
   });
+
 }
 
 // Health check

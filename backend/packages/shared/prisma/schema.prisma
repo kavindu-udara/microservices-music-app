@@ -17,5 +17,6 @@ model User {
   lname String
   email String @unique
   verified Boolean @default(false)
+  password String
   id    Int    @id @default(autoincrement())
 }

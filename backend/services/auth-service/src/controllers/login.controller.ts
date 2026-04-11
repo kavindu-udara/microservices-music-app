@@ -17,6 +17,7 @@ const loginController = async (
     }
 
     // TODO: Implement actual authentication logic (e.g., verify against DB, hash password)
+    
 
     return reply.send({ token: "dummy-token-for-" + username });
   } catch (error: any) {
