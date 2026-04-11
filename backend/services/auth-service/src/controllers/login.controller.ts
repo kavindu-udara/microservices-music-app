@@ -1,7 +1,9 @@
+import bcrypt from "bcryptjs";
+import { prisma } from "@packages/shared/prisma";
 import { FastifyReply, FastifyRequest } from "fastify";
 
 type LoginRequestBody = {
-  username: string;
+  email: string;
   password: string;
 };
 
@@ -10,16 +12,35 @@ const loginController = async (
   reply: FastifyReply,
 ) => {
   try {
-    const { username, password } = request.body;
+    const { email, password } = request.body;
 
-    if (!username || !password) {
+    if (!email || !password) {
       return reply.code(400).send({ error: "Username and password required" });
     }
 
-    // TODO: Implement actual authentication logic (e.g., verify against DB, hash password)
-    
+    const existingUser = await prisma.user.findUnique({ where: { email } });
+    if (!existingUser) {
+      return reply.code(401).send({ error: "Invalid email or password" });
+    }
 
-    return reply.send({ token: "dummy-token-for-" + username });
+    const passwordMatch = bcrypt.compareSync(password, existingUser.password);
+    if (!passwordMatch) {
+      return reply.code(401).send({ error: "Invalid email or password" });
+    }
+
+    const token = await reply.jwtSign(
+      {
+        userId: existingUser.id,
+        firstName: existingUser.fname,
+        lastName: existingUser.lname,
+        email: existingUser.email,
+      },
+      {
+        expiresIn: process.env.JWT_EXPIRES_IN || "1h",
+      },
+    );
+
+    return reply.send({ token, message: "Login Successfull" });
   } catch (error: any) {
     reply
       .code(500)
