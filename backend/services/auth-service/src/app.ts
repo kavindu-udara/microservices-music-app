@@ -2,6 +2,7 @@ import fastify from 'fastify';
 import jwt from '@fastify/jwt';
 import { loginRoutes } from './routes/login.route';
 import { registerRoutes } from './routes/register.route';
+import { accountRoutes } from './routes/account.route';
 
 const app = fastify({
   logger: {
@@ -21,6 +22,9 @@ app.register(loginRoutes);
 
 // register
 app.register(registerRoutes);
+
+// account
+app.register(accountRoutes);
 
 app.get('/health', async (request, reply) => {
   return { status: 'ok', timestamp: Date.now() };
