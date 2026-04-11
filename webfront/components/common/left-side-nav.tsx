@@ -1,0 +1,45 @@
+import { BadgeCentIcon, BellIcon, GlobeIcon, icons, LibraryIcon, MoveUpIcon, MusicIcon } from 'lucide-react'
+import React from 'react'
+import { Button } from '../ui/button'
+
+const navItems = [
+  {
+    name: 'Music',
+    icon: <MusicIcon />
+  },
+  {
+    name : 'Explore',
+    icon : <GlobeIcon />
+  },
+  {
+    name : 'Feed',
+    icon : <BellIcon />
+  },
+  {
+    name : 'Upload',
+    icon : <MoveUpIcon />
+  },
+  {
+    name : 'Collections',
+    icon : <LibraryIcon />
+  }
+]
+
+const LeftSideNav = () => {
+  return (
+    <section className='bg-black w-50 flex flex-col gap-3 p-5 border-r border-gray-900'>
+        <div className='pb-5'>
+            <BadgeCentIcon />
+        </div>
+        {
+            navItems.map((item) => (
+                <Button variant={"ghost"} key={item.name} className='flex flex-wrap gap-3 justify-start w-full'>
+                    {item.icon} {item.name}
+                </Button>
+            ))
+        }
+    </section>
+  )
+}
+
+export default LeftSideNav
