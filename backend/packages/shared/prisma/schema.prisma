@@ -20,3 +20,77 @@ model User {
   password String
   id    Int    @id @default(autoincrement())
 }
+
+model Artist {
+  id Int @id @default(autoincrement())
+  name String
+  bio String
+  country String
+  imageUrl String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  Album Album[]
+  TrackHasArtist TrackHasArtist[]
+}
+
+model Album {
+  id Int @id @default(autoincrement())
+  title String
+  artistId Int
+  releaseDate DateTime
+  coverUrl String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  Artist Artist @relation(fields: [artistId], references: [id])
+  track Track[]
+}
+
+model Track {
+  id Int @id @default(autoincrement())
+  title String
+  albumId Int? 
+  duration Int
+  audioUrl String
+  language String
+  isExplicit Boolean
+  isPublished Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  Album Album? @relation(fields: [albumId], references: [id])
+  TrackHasArtist TrackHasArtist[]
+  TrackHasGenre TrackHasGenre[]
+}
+
+model TrackHasArtist {
+  trackId Int
+  artistId Int
+
+  Track Track @relation(fields: [trackId], references: [id])
+  Artist Artist @relation(fields: [artistId], references: [id])
+
+  @@id([trackId, artistId])
+}
+
+model Genre {
+  id Int @id @default(autoincrement())
+  name String
+  slug String @unique
+  description String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  TrackHasGenre TrackHasGenre[]
+}
+
+model TrackHasGenre {
+  trackId Int
+  genreId Int
+
+  Track Track @relation(fields: [trackId], references: [id])
+  Genre Genre @relation(fields: [genreId], references: [id])
+
+  @@id([trackId, genreId])
+}
