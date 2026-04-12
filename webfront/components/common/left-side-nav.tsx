@@ -1,5 +1,4 @@
 import { BadgeCentIcon, BellIcon, GlobeIcon, icons, LibraryIcon, MoveUpIcon, MusicIcon } from 'lucide-react'
-import React from 'react'
 import { Button } from '../ui/button'
 
 const navItems = [
@@ -23,7 +22,7 @@ const navItems = [
     name : 'Collections',
     icon : <LibraryIcon />
   }
-]
+];
 
 const LeftSideNav = () => {
   return (
