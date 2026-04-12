@@ -88,9 +88,16 @@ importers:
 
   services/catalog-service:
     dependencies:
+      '@packages/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
       fastify:
         specifier: ^5.8.4
         version: 5.8.4
+    devDependencies:
+      pino-pretty:
+        specifier: ^13.1.3
+        version: 13.1.3
 
 packages:
 
