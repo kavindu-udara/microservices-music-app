@@ -5,14 +5,14 @@ const accountController = async (
   reply: FastifyReply,
 ) => {
   try {
-    // get the JWT token from the request header
-    const authHeader = request.headers.authorization;
-    if (!authHeader) {
+    // get the JWT token from the cookies
+    const token = request.cookies.token;
+    if (!token) {
       return reply.code(401).send({ error: "Unauthorized" });
     }
-
-    const token = authHeader.split(" ")[1];
-    if (!token) {
+    
+    const authHeader = request.headers.authorization;
+    if (!authHeader) {
       return reply.code(401).send({ error: "Unauthorized" });
     }
 

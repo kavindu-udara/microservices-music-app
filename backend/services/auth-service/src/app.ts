@@ -3,6 +3,7 @@ import jwt from '@fastify/jwt';
 import { loginRoutes } from './routes/login.route';
 import { registerRoutes } from './routes/register.route';
 import { accountRoutes } from './routes/account.route';
+import cookie from '@fastify/cookie';
 
 const app = fastify({
   logger: {
@@ -15,6 +16,10 @@ const app = fastify({
 await app.register(jwt, {
   secret: process.env.JWT_SECRET || "dev-secret-change-me",
   sign: { expiresIn: "7d" },
+});
+
+app.register(cookie, {
+  secret: process.env.COOKIE_SECRET || "dev-cookie-secret-change-me",
 });
 
 // login

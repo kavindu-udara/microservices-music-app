@@ -13,7 +13,10 @@ const app = Fastify({
 });
 
 // 1. Cross-origin & Rate limiting
-await app.register(cors, { origin: true, credentials: true });
+await app.register(cors, {
+  origin: [process.env.WEBFRONT_URL || "http://localhost:3000"],
+  credentials: true,
+});
 await app.register(rateLimit, {
   max: 100,
   timeWindow: "1 minute",
@@ -28,7 +31,8 @@ await app.register(jwt, {
 
 // 3. Auth hook
 app.decorate("authenticate", async (req: any, reply: any) => {
-  try {3
+  try {
+    3;
     await req.jwtVerify();
   } catch (err: any) {
     reply.code(401).send({ error: "Unauthorized", message: err.message });
@@ -40,7 +44,7 @@ for (const [prefix, service] of Object.entries(SERVICES)) {
   app.register(httpProxy, {
     upstream: service.url,
     prefix: `/${prefix}`,
-    rewritePrefix: "", 
+    rewritePrefix: "",
     undici: {
       bodyTimeout: 30_000,
       headersTimeout: 10_000,
@@ -54,7 +58,6 @@ for (const [prefix, service] of Object.entries(SERVICES)) {
       });
     },
   });
-
 }
 
 // Health check

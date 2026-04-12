@@ -28,6 +28,13 @@ const loginController = async (
       return reply.code(401).send({ error: "Invalid email or password" });
     }
 
+    const sanitizedUser = {
+      id: existingUser.id,
+      fname: existingUser.fname,
+      lname: existingUser.lname,
+      email: existingUser.email,
+    };
+
     const token = await reply.jwtSign(
       {
         userId: existingUser.id,
@@ -40,7 +47,15 @@ const loginController = async (
       },
     );
 
-    return reply.send({ token, message: "Login Successfull" });
+    // send token as a httpOnly cookie
+    reply.setCookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 60 * 60, // 1 hour
+    });
+
+    return reply.send({ message: "Login Successfull", user : sanitizedUser });
   } catch (error: any) {
     reply
       .code(500)
