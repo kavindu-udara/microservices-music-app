@@ -14,6 +14,7 @@ import { Field, FieldError, FieldLabel } from '@/components/ui/field';
 import PasswordInputGroup from '@/components/inputs/password-input-group';
 import { useRouter } from 'next/navigation';
 import * as z from "zod";
+import apiClient from '@/lib/axios';
 
 const schema = z.object({
     firstName: z.string().regex(/^[a-zA-Z]+$/, "First name should only contain letters"),
@@ -66,7 +67,19 @@ const AdminRegisterPage = () => {
         setFormErrors({})
         console.log("valid payload:", result.data)
 
-        // TODO: send the valid payload to the server and handle the response accordingly
+        apiClient.post("/auth/register", {
+            firstName: result.data.firstName,
+            lastName: result.data.lastName,
+            email: result.data.email,
+            password: result.data.password
+        }).then((response) => {
+            console.log("Server response:", response.data);
+            // Optionally, redirect to login page or show a success message
+            // router.push("/admin/login");
+        }).catch((error) => {
+            console.error("Error registering user:", error);
+            // Optionally, set form errors based on server response
+        });
     }
 
     return (
@@ -155,7 +168,7 @@ const AdminRegisterPage = () => {
                 </CardContent>
                 <CardFooter className='flex flex-col'>
                     <Button className='w-full'>Register</Button>
-                    <Button type="button" variant='outline' className='w-full mt-2' onClick={() => router.push("/admin/login")}>Login</Button>
+                    <Button type="button" variant='outline' className='w-full mt-2' onClick={() => router.push("/login")}>Login</Button>
                 </CardFooter>
             </Card>
         </form>
