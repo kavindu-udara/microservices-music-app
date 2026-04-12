@@ -10,6 +10,7 @@ const app = fastify({
   },
 });
 
+
 // Track routes
 app.register(trackRoutes);
 // Album routes
