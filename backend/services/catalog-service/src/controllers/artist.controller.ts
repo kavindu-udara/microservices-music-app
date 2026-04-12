@@ -20,7 +20,6 @@ export const getAllArtists = async (
   reply: FastifyReply,
 ) => {
   try {
-
     // Check Redis cache first
     const key = "catalog:artists:list:v1";
     const cached = await request.server.redis.get(key);
@@ -52,4 +51,51 @@ export const getAllArtists = async (
   } catch (error) {
     reply.code(500).send({ error: "Failed to fetch artists" });
   }
+};
+
+export const getSingleArtist = async (
+  request: FastifyRequest<{ Params: { id: string } }>,
+  reply: FastifyReply,
+) => {
+  const { id } = request.params;
+
+  const cacheKey = `catalog:artist:${id}:v1`;
+  const cached = await request.server.redis.get(cacheKey);
+  if (cached) return reply.send(JSON.parse(cached));
+
+  const artist = await prisma.artist.findUnique({
+    where: { id: parseInt(id, 10) },
+    select: {
+      id: true,
+      name: true,
+      bio: true,
+      imageUrl: true,
+      Country: {
+        select: {
+          name: true,
+          code: true,
+        },
+      },
+      Album: {
+        select: {
+          id: true,
+          title: true,
+          coverUrl: true,
+          releaseDate: true,
+        },
+      },
+    },
+  });
+
+  if (!artist) {
+    return reply.code(404).send({ error: "Artist not found" });
+  }
+
+  await request.server.redis.setex(
+    cacheKey,
+    60,
+    JSON.stringify({ artist, message: "Artist fetched successfully" }),
+  );
+
+  reply.send({ artist, message: `Artist with ID ${id} fetched successfully` });
 };

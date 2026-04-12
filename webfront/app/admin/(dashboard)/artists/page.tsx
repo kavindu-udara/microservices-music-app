@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { PlusIcon } from 'lucide-react';
 import apiClient from '@/lib/axios';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import Link from 'next/link';
 
 type Country = {
     name: string,
@@ -86,11 +87,25 @@ const ArtistsPage = () => {
                 </TableHeader>
                 <TableBody>
                     {isLoading && (
-                        <TableRow>
-                            <TableCell colSpan={5} className='text-center text-muted-foreground'>
-                                Loading artists...
-                            </TableCell>
-                        </TableRow>
+                        Array.from({ length: 5 }).map((_, index) => (
+                            <TableRow key={`artists-loading-${index}`}>
+                                <TableCell>
+                                    <div className='h-10 w-10 rounded-full bg-muted animate-pulse' />
+                                </TableCell>
+                                <TableCell>
+                                    <div className='h-5 w-32 rounded bg-muted animate-pulse' />
+                                </TableCell>
+                                <TableCell>
+                                    <div className='h-5 w-full max-w-md rounded bg-muted animate-pulse' />
+                                </TableCell>
+                                <TableCell>
+                                    <div className='h-5 w-12 rounded bg-muted animate-pulse' />
+                                </TableCell>
+                                <TableCell className='text-right'>
+                                    <div className='h-8 w-16 rounded bg-muted animate-pulse ml-auto' />
+                                </TableCell>
+                            </TableRow>
+                        ))
                     )}
 
                     {!isLoading && errorMessage && (
@@ -110,24 +125,25 @@ const ArtistsPage = () => {
                     )}
 
                     {!isLoading && !errorMessage && isSuccess && artists.length > 0 && artists.map((artist) => (
-                            <TableRow key={artist.id}>
-                                <TableCell className="font-medium">
-                                    <Avatar>
-                                        <AvatarImage src={artist.imageUrl} />
-                                        <AvatarFallback>
-                                            {artist.name.slice(0, 2).toUpperCase()}
-                                        </AvatarFallback>
-                                    </Avatar>
-                                </TableCell>
-                                <TableCell>{artist.name}</TableCell>
-                                <TableCell>{artist.bio}</TableCell>
+                        <TableRow key={artist.id}>
+                            <TableCell className="font-medium">
+                                <Avatar>
+                                    <AvatarImage src={artist.imageUrl} />
+                                    <AvatarFallback>
+                                        {artist.name.slice(0, 2).toUpperCase()}
+                                    </AvatarFallback>
+                                </Avatar>
+                            </TableCell>
+                            <TableCell>
+                                <Link href={`/admin/artists/${artist.id}`}>{artist.name}</Link></TableCell>
+                            <TableCell>{artist.bio}</TableCell>
 
-                                <TableCell>{artist.Country.code}</TableCell>
-                                <TableCell className="text-right">
-                                    <Button variant={"outline"} size={"sm"}>Edit</Button>
-                                </TableCell>
-                            </TableRow>
-                        ))}
+                            <TableCell>{artist.Country.code}</TableCell>
+                            <TableCell className="text-right">
+                                <Button variant={"outline"} size={"sm"}>Edit</Button>
+                            </TableCell>
+                        </TableRow>
+                    ))}
                 </TableBody>
             </Table>
         </div>
