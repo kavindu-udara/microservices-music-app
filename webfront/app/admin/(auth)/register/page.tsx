@@ -55,18 +55,18 @@ const AdminRegisterPage = () => {
         if (!result.success) {
             const nextErrors: FormErrors = {}
             const flattened = result.error.flatten().fieldErrors
-
             for (const key of Object.keys(flattened) as Array<keyof FormData>) {
                 const first = flattened[key]?.[0]
                 if (first) nextErrors[key] = first
             }
-
             setFormErrors(nextErrors)
             return
         }
 
         setFormErrors({})
         console.log("valid payload:", result.data)
+
+        // TODO: send the valid payload to the server and handle the response accordingly
     }
 
     return (
