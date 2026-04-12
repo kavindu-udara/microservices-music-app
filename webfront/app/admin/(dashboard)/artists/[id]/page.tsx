@@ -5,6 +5,15 @@ import apiClient from '@/lib/axios';
 import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import React, { useEffect } from 'react'
+import {
+    Empty,
+    EmptyContent,
+    EmptyDescription,
+    EmptyHeader,
+    EmptyMedia,
+    EmptyTitle,
+} from "@/components/ui/empty"
+import { CloudOffIcon } from 'lucide-react';
 
 type Artist = {
     id: number,
@@ -123,6 +132,13 @@ const SingleAdminArtistPage = () => {
             <p className='mb-3 text-gray-600'>{artist.bio}</p>
 
             <h2 className='text-xl font-semibold mb-3'>Albums</h2>
+            {
+                artist.Album.length > 0 && (
+                    <div className='flex justify-end'>
+                        <Button size={'sm'}>Add New Album</Button>
+                    </div>
+                )
+            }
             <div className='flex flex-wrap gap-5'>
                 {
                     artist.Album.length > 0 ? artist.Album.map((album) => (
@@ -138,7 +154,19 @@ const SingleAdminArtistPage = () => {
                             <p className='text-sm text-gray-400'>{new Date(album.releaseDate).toLocaleDateString()}</p>
                         </div>
                     )) : (
-                        <p className='text-muted-foreground'>No albums found for this artist.</p>
+
+                        <Empty>
+                            <EmptyHeader>
+                                <EmptyMedia variant="icon">
+                                    <CloudOffIcon />
+                                </EmptyMedia>
+                                <EmptyTitle>No Albums</EmptyTitle>
+                                <EmptyDescription>No albums found</EmptyDescription>
+                            </EmptyHeader>
+                            <EmptyContent>
+                                <Button>Add new album</Button>
+                            </EmptyContent>
+                        </Empty>
                     )
                 }
             </div>
