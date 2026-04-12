@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import { prisma } from "@packages/shared/prisma";
 import { FastifyReply, FastifyRequest } from "fastify";
+import { loginSchema } from "@packages/shared/schema";
 
 type LoginRequestBody = {
   email: string;
@@ -12,11 +13,20 @@ const loginController = async (
   reply: FastifyReply,
 ) => {
   try {
-    const { email, password } = request.body;
+    const validationResult = loginSchema.safeParse(request.body);
+    if (!validationResult.success) {
+      const errors = validationResult.error.issues.map((issue) => ({
+        field: issue.path.join("."),
+        message: issue.message,
+      }));
 
-    if (!email || !password) {
-      return reply.code(400).send({ error: "Username and password required" });
+      return reply.code(400).send({
+        error: "Validation failed",
+        errors,
+      });
     }
+
+    const { email, password } = validationResult.data;
 
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (!existingUser) {
@@ -55,7 +65,7 @@ const loginController = async (
       maxAge: 60 * 60, // 1 hour
     });
 
-    return reply.send({ message: "Login Successfull", user : sanitizedUser });
+    return reply.send({ message: "Login Successfull", user: sanitizedUser });
   } catch (error: any) {
     reply
       .code(500)

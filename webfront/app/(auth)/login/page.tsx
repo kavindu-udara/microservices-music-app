@@ -11,9 +11,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Field, FieldError, FieldLabel } from '@/components/ui/field';
 import PasswordInputGroup from '@/components/inputs/password-input-group';
-import React, { ChangeEvent } from "react";
-import { useRouter } from "next/navigation";
+import React, { ChangeEvent, useCallback } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import * as z from "zod";
+import apiClient from "@/lib/axios";
+import { toast } from "sonner"
 
 const schema = z.object({
     email: z.email().regex(/^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/, "Invalid email format"),
@@ -26,6 +28,15 @@ type FormErrors = Partial<Record<keyof FormData, string>>;
 const AdminLogin = () => {
 
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const errorMessage = searchParams.get("errorMessage");
+
+
+    React.useEffect(() => {
+        if (errorMessage) {
+            toast.error(errorMessage);
+        }
+    }, [errorMessage]);
 
     const [formData, setFormData] = React.useState<FormData>({
         email: '',
@@ -59,10 +70,19 @@ const AdminLogin = () => {
         console.log("valid payload:", result.data)
 
         // TODO: send the valid payload to the server and handle the response accordingly
+        apiClient.post("/auth/login", {
+            email: formData.email,
+            password: formData.password
+        }).then((response) => {
+            console.log("Login successful:", response.data);
+            router.push("/account");
+        }).catch((error) => {
+            console.error("Login failed:", error.response?.data || error.message);
+        });
     }
 
     return (
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className='space-y-4'>
             <Card className='w-xl'>
                 <CardHeader>
                     <CardTitle>Login</CardTitle>

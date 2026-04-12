@@ -5,7 +5,8 @@
   "main": "index.js",
   "type": "module",
   "exports": {
-    "./prisma": "./prisma.ts"
+    "./prisma": "./prisma.ts",
+    "./schema": "./schema.ts"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -23,6 +24,7 @@
     "@prisma/adapter-pg": "^7.7.0",
     "@prisma/client": "^7.7.0",
     "dotenv": "^17.4.1",
-    "pg": "^8.20.0"
+    "pg": "^8.20.0",
+    "zod": "^4.3.6"
   }
 }

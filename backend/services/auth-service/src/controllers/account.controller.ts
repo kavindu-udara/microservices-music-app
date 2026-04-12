@@ -5,26 +5,17 @@ const accountController = async (
   reply: FastifyReply,
 ) => {
   try {
-    // get the JWT token from the cookies
-    const token = request.cookies.token;
-    if (!token) {
-      return reply.code(401).send({ error: "Unauthorized" });
-    }
-    
-    const authHeader = request.headers.authorization;
-    if (!authHeader) {
+    if (!request.cookies.token) {
       return reply.code(401).send({ error: "Unauthorized" });
     }
 
-    // verify the token
-    const decoded = await request.jwtVerify();
+    // Verify JWT using cookie authentication.
+    const decoded = await request.jwtVerify({ onlyCookie: true });
 
     // return the decoded token data as the account information
     return reply.send({ account: decoded });
   } catch (error: any) {
-    reply
-      .code(500)
-      .send({ error: "Internal Server Error", message: error.message });
+    reply.code(401).send({ error: "Unauthorized", message: error.message });
   }
 };
 

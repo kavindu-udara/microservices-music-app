@@ -77,7 +77,7 @@ const AdminRegisterPage = () => {
             // Optionally, redirect to login page or show a success message
             // router.push("/admin/login");
         }).catch((error) => {
-            console.error("Error registering user:", error);
+            console.error("Error registering user:", error.response?.data || error.message);
             // Optionally, set form errors based on server response
         });
     }

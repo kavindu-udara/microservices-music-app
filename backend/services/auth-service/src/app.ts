@@ -12,14 +12,18 @@ const app = fastify({
   },
 });
 
+app.register(cookie, {
+  secret: process.env.COOKIE_SECRET || "dev-cookie-secret-change-me",
+});
+
 // JWT Setup
 await app.register(jwt, {
   secret: process.env.JWT_SECRET || "dev-secret-change-me",
   sign: { expiresIn: "7d" },
-});
-
-app.register(cookie, {
-  secret: process.env.COOKIE_SECRET || "dev-cookie-secret-change-me",
+  cookie: {
+    cookieName: "token",
+    signed: false,
+  },
 });
 
 // login
