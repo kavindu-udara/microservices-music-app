@@ -69,18 +69,109 @@ const countries = [
   { name: "Tajikistan", code: "TJ" },
 ];
 
+const artists = [
+  {
+    name: "Taylor Swift",
+    bio: "American singer-songwriter known for narrative songs",
+    imageUrl: "https://example.com/taylor-swift.jpg",
+    countryId: 1,
+  },
+  {
+    name: "The Weeknd",
+    bio: "Canadian singer and producer",
+    imageUrl: "https://example.com/the-weeknd.jpg",
+    countryId: 2,
+  },
+  {
+    name: "Adele",
+    bio: "British singer with powerful vocals",
+    imageUrl: "https://example.com/adele.jpg",
+    countryId: 3,
+  },
+  {
+    name: "Tame Impala",
+    bio: "Australian psychedelic music project",
+    imageUrl: "https://example.com/tame-impala.jpg",
+    countryId: 4,
+  },
+  {
+    name: "Kraftwerk",
+    bio: "German electronic music pioneers",
+    imageUrl: "https://example.com/kraftwerk.jpg",
+    countryId: 5,
+  },
+  {
+    name: "Daft Punk",
+    bio: "French electronic duo",
+    imageUrl: "https://example.com/daft-punk.jpg",
+    countryId: 6,
+  },
+  {
+    name: "Andrea Bocelli",
+    bio: "Italian tenor and songwriter",
+    imageUrl: "https://example.com/andrea-bocelli.jpg",
+    countryId: 7,
+  },
+  {
+    name: "Rosalía",
+    bio: "Spanish singer and performer",
+    imageUrl: "https://example.com/rosalia.jpg",
+    countryId: 8,
+  },
+  {
+    name: "Anitta",
+    bio: "Brazilian singer and rapper",
+    imageUrl: "https://example.com/anitta.jpg",
+    countryId: 9,
+  },
+  {
+    name: "A.R. Rahman",
+    bio: "Indian composer and singer",
+    imageUrl: "https://example.com/ar-rahman.jpg",
+    countryId: 10,
+  },
+  {
+    name: "Yuki Kajiura",
+    bio: "Japanese composer and musician",
+    imageUrl: "https://example.com/yuki-kajiura.jpg",
+    countryId: 11,
+  },
+  {
+    name: "Jay Chou",
+    bio: "Chinese singer and actor",
+    imageUrl: "https://example.com/jay-chou.jpg",
+    countryId: 12,
+  },
+  {
+    name: "BTS",
+    bio: "South Korean boy band",
+    imageUrl: "https://example.com/bts.jpg",
+    countryId: 13,
+  },
+  {
+    name: "Natalia Lafourcade",
+    bio: "Mexican singer-songwriter",
+    imageUrl: "https://example.com/natalia-lafourcade.jpg",
+    countryId: 14,
+  },
+];
+
 async function load() {
   try {
-
     // create countries
     await prisma.country.createMany({
       data: countries,
       skipDuplicates: true,
     });
-
+    // create artists
+    await prisma.artist.createMany({
+      data: artists,
+      skipDuplicates: true,
+    });
+    console.log("Data seeded successfully");
   } catch (error) {
     console.error("Error seeding data:", error);
   }
 }
 
-load()
+load();
