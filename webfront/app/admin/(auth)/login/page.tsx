@@ -11,10 +11,17 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Field, FieldLabel } from '@/components/ui/field';
 import PasswordInputGroup from '@/components/inputs/password-input-group';
+import React from "react";
 
 const AdminLogin = () => {
+
+    const handleSubmit = (event: React.SubmitEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        // Handle form submission logic here
+    }
+
     return (
-        <form>
+        <form onSubmit={handleSubmit}>
             <Card className='w-xl'>
                 <CardHeader>
                     <CardTitle>Login</CardTitle>
@@ -39,7 +46,7 @@ const AdminLogin = () => {
                 </CardContent>
                 <CardFooter className='flex flex-col'>
                     <Button className='w-full'>Login</Button>
-                    <Button variant='outline' className='w-full mt-2'>Register</Button>
+                    <Button type="button" variant='outline' className='w-full mt-2'>Register</Button>
                 </CardFooter>
             </Card>
         </form>
