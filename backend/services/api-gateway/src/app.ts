@@ -4,19 +4,12 @@ import jwt from "@fastify/jwt";
 import cors from "@fastify/cors";
 import rateLimit from "@fastify/rate-limit";
 import { SERVICES } from "./config";
-import fastifyRedis from '@fastify/redis';
 
 const app = Fastify({
   logger: {
     level: process.env.NODE_ENV === "production" ? "info" : "debug",
     transport: { target: "pino-pretty" },
   },
-});
-
-// redis
-await app.register(fastifyRedis, {
-  host: process.env.REDIS_HOST ?? "127.0.0.1",
-  port: Number(process.env.REDIS_PORT ?? 6379),
 });
 
 // 1. Cross-origin & Rate limiting

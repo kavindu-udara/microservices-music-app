@@ -2,6 +2,7 @@ import fastify from 'fastify';
 import { trackRoutes } from './routes/track.route';
 import { albumRoutes } from './routes/album.route';
 import { artistRoutes } from './routes/artist.route';
+import fastifyRedis from '@fastify/redis';
 
 const app = fastify({
   logger: {
@@ -10,6 +11,11 @@ const app = fastify({
   },
 });
 
+// redis
+await app.register(fastifyRedis, {
+  host: process.env.REDIS_HOST || '127.0.0.1',
+  port: parseInt(process.env.REDIS_PORT || '6379', 10),
+})
 
 // Track routes
 app.register(trackRoutes);

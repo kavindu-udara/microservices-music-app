@@ -50,9 +50,6 @@ importers:
       '@fastify/rate-limit':
         specifier: ^10.3.0
         version: 10.3.0
-      '@fastify/redis':
-        specifier: ^7.2.0
-        version: 7.2.0
       '@packages/shared':
         specifier: workspace:*
         version: link:../../packages/shared
@@ -100,6 +97,9 @@ importers:
 
   services/catalog-service:
     dependencies:
+      '@fastify/redis':
+        specifier: ^7.2.0
+        version: 7.2.0
       '@packages/shared':
         specifier: workspace:*
         version: link:../../packages/shared
