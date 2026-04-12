@@ -6,7 +6,17 @@ import {
 } from "@/components/ui/input-group"
 import { useState } from "react";
 
-const PasswordInputGroup = ({ id, placeholder, required }: { id: string, placeholder: string, required?: boolean }) => {
+type Props = {
+    id: string;
+    name? : string;
+    placeholder: string;
+    required?: boolean;
+    value?: string;
+    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    ariaInvalid?: boolean;
+}
+
+const PasswordInputGroup = ({ id, placeholder, required, onChange, ariaInvalid, name }: Props) => {
 
     const [showPassword, setShowPassword] = useState(false);
 
@@ -14,9 +24,12 @@ const PasswordInputGroup = ({ id, placeholder, required }: { id: string, placeho
         <InputGroup>
             <InputGroupInput
                 id={id}
+                name={name}
                 type={showPassword ? 'text' : 'password'}
                 placeholder={placeholder}
                 required={required}
+                onChange={onChange}
+                aria-invalid={ariaInvalid}
             />
             <InputGroupAddon align="inline-end" className="cursor-pointer" onClick={() => setShowPassword(!showPassword)}>
                 {

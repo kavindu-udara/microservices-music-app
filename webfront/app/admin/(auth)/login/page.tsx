@@ -44,7 +44,6 @@ const AdminLogin = () => {
                             Password <span className="text-destructive">*</span>
                         </FieldLabel>
                         <PasswordInputGroup id='password' placeholder='password' required />
-
                     </Field>
                 </CardContent>
                 <CardFooter className='flex flex-col'>
