@@ -2,6 +2,7 @@ import { BadgeCentIcon, MusicIcon, UserRoundIcon } from 'lucide-react';
 import React from 'react'
 import { Button } from '../ui/button';
 
+
 const navItems = [
   {
     name : 'Artists',
