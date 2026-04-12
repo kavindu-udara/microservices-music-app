@@ -21,14 +21,26 @@ model User {
   id    Int    @id @default(autoincrement())
 }
 
+model Country {
+  id Int @id @default(autoincrement())
+  name String
+  code String @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  Artist Artist[]
+}
+
 model Artist {
   id Int @id @default(autoincrement())
   name String
   bio String
-  country String
   imageUrl String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  countryId Int
+  Country Country @relation(fields: [countryId], references: [id])
 
   Album Album[]
   TrackHasArtist TrackHasArtist[]
