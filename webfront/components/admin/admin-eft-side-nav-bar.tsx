@@ -30,7 +30,7 @@ const AdminLeftSideNavBar = () => {
   const currentPath = usePathname();
 
   return (
-    <section className='bg-black w-50 flex flex-col gap-3 p-5 border-r border-gray-900'>
+    <section className='bg-black w-50 flex flex-col gap-3 p-5 border-r border-gray-900 h-screen z-0 fixed top-0 left-0'>
       <div className='pb-5'>
         <BadgeCentIcon />
       </div>

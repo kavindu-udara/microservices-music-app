@@ -5,8 +5,10 @@ import React, { ReactNode } from 'react'
 const layout = ({ children }: { children: ReactNode }) => {
     return (
         <div className='w-full min-h-screen flex flex-row text-white'>
+            <div className='w-50'>
             <AdminLeftSideNavBar />
-            <div className='flex flex-col w-full'>
+            </div>
+            <div className='flex flex-col w-full z-0 overflow-y-scroll'>
                 <AdminHeader />
                 {children}
             </div>

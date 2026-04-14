@@ -13,7 +13,7 @@ import {
     EmptyMedia,
     EmptyTitle,
 } from "@/components/ui/empty"
-import { CloudOffIcon } from 'lucide-react';
+import { CloudOffIcon, Music2Icon } from 'lucide-react';
 
 type Artist = {
     id: number,
@@ -125,50 +125,84 @@ const SingleAdminArtistPage = () => {
                 &larr; Back to Artists
             </Button>
 
-            <h1 className='text-4xl font-bold mb-5 flex gap-5'>
-                {artist.name}
-                <Badge variant={'outline'}>{artist.Country.code}</Badge>
-            </h1>
-            <p className='mb-3 text-gray-600'>{artist.bio}</p>
-
-            <h2 className='text-xl font-semibold mb-3'>Albums</h2>
-            {
-                artist.Album.length > 0 && (
-                    <div className='flex justify-end'>
-                        <Button size={'sm'}>Add New Album</Button>
-                    </div>
-                )
-            }
-            <div className='flex flex-wrap gap-5'>
-                {
-                    artist.Album.length > 0 ? artist.Album.map((album) => (
-                        <div key={album.id} className='w-50 border border-gray-700 rounded p-3'>
-                            <Image
-                                src={album.coverUrl}
-                                alt={album.title}
-                                width={200}
-                                height={140}
-                                className='w-full h-auto mb-3 rounded'
+            <div className='mt-4 grid gap-8 lg:grid-cols-[320px_1fr] lg:items-start'>
+                <div className='overflow-hidden rounded-3xl border border-border/60 bg-linear-to-br from-muted/60 via-background to-background p-3 shadow-sm'>
+                    {artist.imageUrl ? (
+                        <div className='relative aspect-square overflow-hidden rounded-2xl bg-muted'>
+                            <img
+                                src={artist.imageUrl}
+                                alt={artist.name}
+                                fill
+                                sizes='(max-width: 1024px) 100vw, 320px'
+                                className='object-cover'
+                                priority
                             />
-                            <h3 className='text-lg font-medium'>{album.title}</h3>
-                            <p className='text-sm text-gray-400'>{new Date(album.releaseDate).toLocaleDateString()}</p>
                         </div>
-                    )) : (
+                    ) : (
+                        <div className='flex aspect-square items-center justify-center rounded-2xl border border-dashed border-border/70 bg-muted/40'>
+                            <div className='text-center text-muted-foreground'>
+                                <Music2Icon className='mx-auto mb-3 size-10' />
+                                <p className='text-sm font-medium'>No artist image</p>
+                            </div>
+                        </div>
+                    )}
+                    <div className='mt-4 flex items-center justify-between gap-3 px-1'>
+                        <div>
+                            <p className='text-sm text-muted-foreground'>Country</p>
+                            <div className='mt-1 flex items-center gap-2'>
+                                <Badge variant={'outline'}>{artist.Country.code}</Badge>
+                                <span className='text-sm font-medium'>{artist.Country.name}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-                        <Empty>
-                            <EmptyHeader>
-                                <EmptyMedia variant="icon">
-                                    <CloudOffIcon />
-                                </EmptyMedia>
-                                <EmptyTitle>No Albums</EmptyTitle>
-                                <EmptyDescription>No albums found</EmptyDescription>
-                            </EmptyHeader>
-                            <EmptyContent>
-                                <Button>Add new album</Button>
-                            </EmptyContent>
-                        </Empty>
-                    )
-                }
+                <div>
+                    <div className='flex flex-wrap items-center gap-3'>
+                        <h1 className='text-4xl font-bold'>{artist.name}</h1>
+                        <Badge variant={'outline'}>{artist.Country.code}</Badge>
+                    </div>
+                    <p className='mt-4 max-w-3xl text-muted-foreground leading-7'>{artist.bio}</p>
+
+                    <div className='mt-10 flex items-center justify-between gap-4'>
+                        <h2 className='text-xl font-semibold'>Albums</h2>
+                        {artist.Album.length > 0 && (
+                            <Button size={'sm'}>Add New Album</Button>
+                        )}
+                    </div>
+
+                    <div className='mt-4 flex flex-wrap gap-5'>
+                        {
+                            artist.Album.length > 0 ? artist.Album.map((album) => (
+                                <div key={album.id} className='w-50 overflow-hidden rounded-2xl border border-border/70 bg-card p-3 shadow-sm transition-transform hover:-translate-y-0.5'>
+                                    <Image
+                                        src={album.coverUrl}
+                                        alt={album.title}
+                                        width={200}
+                                        height={140}
+                                        className='mb-3 h-40 w-full rounded-xl object-cover'
+                                    />
+                                    <h3 className='text-lg font-medium'>{album.title}</h3>
+                                    <p className='text-sm text-muted-foreground'>{new Date(album.releaseDate).toLocaleDateString()}</p>
+                                </div>
+                            )) : (
+
+                                <Empty>
+                                    <EmptyHeader>
+                                        <EmptyMedia variant="icon">
+                                            <CloudOffIcon />
+                                        </EmptyMedia>
+                                        <EmptyTitle>No Albums</EmptyTitle>
+                                        <EmptyDescription>No albums found</EmptyDescription>
+                                    </EmptyHeader>
+                                    <EmptyContent>
+                                        <Button>Add new album</Button>
+                                    </EmptyContent>
+                                </Empty>
+                            )
+                        }
+                    </div>
+                </div>
             </div>
         </div>
     )

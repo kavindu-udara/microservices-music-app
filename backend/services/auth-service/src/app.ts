@@ -4,6 +4,7 @@ import { loginRoutes } from './routes/login.route';
 import { registerRoutes } from './routes/register.route';
 import { accountRoutes } from './routes/account.route';
 import cookie from '@fastify/cookie';
+import fastifyKafka from '@fastify/kafka';
 
 const app = fastify({
   logger: {
@@ -12,6 +13,13 @@ const app = fastify({
   },
 });
 
+// kafka
+await app.register(fastifyKafka, {
+  clientId: 'auth-service',
+  brokers: [process.env.KAFKA_BROKER || 'localhost:9094'],
+});
+
+// cookie setup
 app.register(cookie, {
   secret: process.env.COOKIE_SECRET || "dev-cookie-secret-change-me",
 });

@@ -13,6 +13,7 @@ import { PlusIcon } from 'lucide-react';
 import apiClient from '@/lib/axios';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 type Country = {
     name: string,
@@ -51,6 +52,7 @@ const tableHeadings = [
 ];
 
 const ArtistsPage = () => {
+    const router = useRouter();
 
     const [artists, setArtists] = React.useState<Artist[]>([]);
     const [isLoading, setIsLoading] = React.useState(true);
@@ -72,7 +74,7 @@ const ArtistsPage = () => {
     return (
         <div className='p-5 flex flex-col gap-5'>
             <div className='flex justify-end'>
-                <Button> <PlusIcon /> Add New Artist</Button>
+                <Button onClick={() => router.push("/admin/artists/create")} > <PlusIcon /> Add New Artist</Button>
             </div>
             {/* table */}
             <Table>
@@ -140,7 +142,13 @@ const ArtistsPage = () => {
 
                             <TableCell>{artist.Country.code}</TableCell>
                             <TableCell className="text-right">
-                                <Button variant={"outline"} size={"sm"}>Edit</Button>
+                                <Button
+                                    variant={"outline"}
+                                    size={"sm"}
+                                    onClick={() => router.push(`/admin/artists/${artist.id}/edit`)}
+                                >
+                                    Edit
+                                </Button>
                             </TableCell>
                         </TableRow>
                     ))}
