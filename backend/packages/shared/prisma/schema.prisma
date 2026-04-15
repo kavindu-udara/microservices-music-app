@@ -23,7 +23,7 @@ model User {
   role Role @default(USER)
   email String @unique
   verified Boolean @default(false)
-  password String
+  password String?
   id    Int    @id @default(autoincrement())
 
   accounts Account[]

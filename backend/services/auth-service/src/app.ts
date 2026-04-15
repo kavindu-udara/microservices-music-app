@@ -5,12 +5,28 @@ import { registerRoutes } from './routes/register.route';
 import { accountRoutes } from './routes/account.route';
 import cookie from '@fastify/cookie';
 import fastifyKafka from '@fastify/kafka';
+import {fastifyOauth2} from "@fastify/oauth2";
+import { oauthRoutes } from './routes/oauth.route';
 
 const app = fastify({
   logger: {
     level: process.env.NODE_ENV === "production" ? "info" : "debug",
     transport: { target: "pino-pretty" },
   },
+});
+
+// OAuth2 Setup for Google
+app.register(fastifyOauth2, {
+  name: 'googleOAuth2',
+  credentials: {
+    client: {
+      id: process.env.GOOGLE_CLIENT_ID || "your-google-client-id",
+      secret: process.env.GOOGLE_CLIENT_SECRET || "your-google-client-secret",
+    },
+    auth: fastifyOauth2.GOOGLE_CONFIGURATION,
+  },
+  startRedirectPath: '/auth/google',
+  callbackUri: `${process.env.GOOGLE_CALLBACK_URL || 'http://localhost:3001'}/auth/google/callback`,
 });
 
 // kafka
@@ -36,6 +52,9 @@ await app.register(jwt, {
 
 // login
 app.register(loginRoutes);
+
+// OAuth
+app.register(oauthRoutes);
 
 // register
 app.register(registerRoutes);
