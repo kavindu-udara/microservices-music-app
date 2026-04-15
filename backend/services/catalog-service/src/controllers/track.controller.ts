@@ -1,4 +1,5 @@
 import { prisma } from "@packages/shared/prisma";
+import { uploadTrack } from "@packages/shared/upload-track";
 import { FastifyReply, FastifyRequest } from "fastify";
 
 type CreateTrackRequestBody = {
@@ -13,28 +14,128 @@ type CreateTrackRequestBody = {
 	genreIds?: number[];
 };
 
+const parseBoolean = (value: unknown, defaultValue = false) => {
+	if (typeof value === "boolean") return value;
+	if (typeof value === "string") {
+		if (value.toLowerCase() === "true") return true;
+		if (value.toLowerCase() === "false") return false;
+	}
+	return defaultValue;
+};
+
+const parseNumberArray = (value: unknown): number[] => {
+	if (Array.isArray(value)) {
+		return value
+			.map((entry) => Number(entry))
+			.filter((entry) => !Number.isNaN(entry));
+	}
+
+	if (typeof value === "string") {
+		if (value.trim() === "") return [];
+
+		return value
+			.split(",")
+			.map((entry) => entry.trim())
+			.filter((entry) => entry.length > 0)
+			.map((entry) => Number(entry))
+			.filter((entry) => !Number.isNaN(entry));
+	}
+
+	if (value === undefined || value === null || value === "") {
+		return [];
+	}
+
+	return [Number(value)];
+};
+
 export const createTrack = async (
 	request: FastifyRequest<{ Body: CreateTrackRequestBody }>,
 	reply: FastifyReply,
 ) => {
 	try {
-		const {
-			title,
-			albumId,
-			duration,
-			audioUrl,
-			language,
-			isExplicit = false,
-			isPublished = false,
-			artistIds,
-			genreIds = [],
-		} = request.body;
+		let title = "";
+		let albumId: number | null | undefined;
+		let duration = 0;
+		let audioUrl = "";
+		let language = "";
+		let isExplicit = false;
+		let isPublished = false;
+		let artistIds: number[] = [];
+		let genreIds: number[] = [];
+		let pendingUpload:
+			| {
+					fileBuffer: Buffer;
+					fileName: string;
+					contentType: string;
+			  }
+			| null = null;
+		const contentType = String(request.headers["content-type"] || "");
+		const shouldParseMultipart =
+			typeof request.isMultipart === "function"
+				? request.isMultipart() || contentType.includes("multipart/form-data")
+				: contentType.includes("multipart/form-data");
+
+		if (shouldParseMultipart) {
+			const fields: Record<string, string> = {};
+			let fileBuffer: Buffer | null = null;
+			let fileName = "track.mp3";
+			let contentType = "audio/mpeg";
+
+			for await (const part of request.parts()) {
+				if (part.type === "file") {
+					const allowedMimeTypes = ["audio/mpeg", "audio/mp3", "audio/x-mpeg-3"];
+					if (!allowedMimeTypes.includes(part.mimetype)) {
+						return reply.code(400).send({ error: "Only MP3 files are allowed" });
+					}
+
+					fileBuffer = await part.toBuffer();
+					fileName = part.filename;
+					contentType = part.mimetype;
+				} else {
+					fields[part.fieldname] = String(part.value);
+				}
+			}
+
+			if (!fileBuffer) {
+				return reply.code(400).send({ error: "Audio file is required" });
+			}
+
+			title = fields.title?.trim() || "";
+			albumId = fields.albumId ? Number(fields.albumId) : null;
+			duration = Number(fields.duration);
+			language = fields.language?.trim() || "";
+			isExplicit = parseBoolean(fields.isExplicit, false);
+			isPublished = parseBoolean(fields.isPublished, false);
+			artistIds = parseNumberArray(fields.artistIds);
+			genreIds = parseNumberArray(fields.genreIds);
+
+			pendingUpload = {
+				fileBuffer,
+				fileName,
+				contentType,
+			};
+		} else {
+			const body = request.body;
+			if (!body || typeof body !== "object") {
+				return reply.code(400).send({ error: "Invalid request payload" });
+			}
+
+			title = body.title;
+			albumId = body.albumId;
+			duration = Number(body.duration);
+			audioUrl = body.audioUrl;
+			language = body.language;
+			isExplicit = body.isExplicit ?? false;
+			isPublished = body.isPublished ?? false;
+			artistIds = body.artistIds ?? [];
+			genreIds = body.genreIds ?? [];
+		}
 
 		if (!title?.trim()) {
 			return reply.code(400).send({ error: "Track title is required" });
 		}
 
-		if (!audioUrl?.trim()) {
+		if (!audioUrl?.trim() && !pendingUpload) {
 			return reply.code(400).send({ error: "audioUrl is required" });
 		}
 
@@ -87,6 +188,22 @@ export const createTrack = async (
 			if (genreCount !== normalizedGenreIds.length) {
 				return reply.code(404).send({ error: "One or more genres were not found" });
 			}
+		}
+
+		if (pendingUpload) {
+			const firstArtistId = normalizedArtistIds[0];
+			const uploaded = await uploadTrack({
+				fileBuffer: pendingUpload.fileBuffer,
+				fileName: pendingUpload.fileName,
+				contentType: pendingUpload.contentType,
+				artistId: Number.isNaN(firstArtistId) ? undefined : firstArtistId,
+			});
+
+			audioUrl = uploaded.audioUrl;
+		}
+
+		if (!audioUrl?.trim()) {
+			return reply.code(400).send({ error: "audioUrl is required" });
 		}
 
 		const track = await prisma.track.create({
