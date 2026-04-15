@@ -3,7 +3,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import apiClient from '@/lib/axios';
 import Image from 'next/image';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import React, { useEffect } from 'react'
 import {
     Empty,
@@ -33,6 +33,7 @@ type Artist = {
 }
 
 const SingleAdminArtistPage = () => {
+    const router = useRouter();
 
     const artistId = useParams().id;
     const normalizedArtistId = Array.isArray(artistId) ? artistId[0] : artistId;
@@ -129,7 +130,7 @@ const SingleAdminArtistPage = () => {
                 <div className='overflow-hidden rounded-3xl border border-border/60 bg-linear-to-br from-muted/60 via-background to-background p-3 shadow-sm'>
                     {artist.imageUrl ? (
                         <div className='relative aspect-square overflow-hidden rounded-2xl bg-muted'>
-                            <img
+                            <Image
                                 src={artist.imageUrl}
                                 alt={artist.name}
                                 fill
@@ -167,7 +168,12 @@ const SingleAdminArtistPage = () => {
                     <div className='mt-10 flex items-center justify-between gap-4'>
                         <h2 className='text-xl font-semibold'>Albums</h2>
                         {artist.Album.length > 0 && (
-                            <Button size={'sm'}>Add New Album</Button>
+                            <Button
+                                size={'sm'}
+                                onClick={() => router.push(`/admin/artists/${normalizedArtistId}/albums/create`)}
+                            >
+                                Add New Album
+                            </Button>
                         )}
                     </div>
 
@@ -175,7 +181,8 @@ const SingleAdminArtistPage = () => {
                         {
                             artist.Album.length > 0 ? artist.Album.map((album) => (
                                 <div key={album.id} className='w-50 overflow-hidden rounded-2xl border border-border/70 bg-card p-3 shadow-sm transition-transform hover:-translate-y-0.5'>
-                                    <Image
+                                    <img
+                                        onClick={() => router.push(`/admin/artists/${artistId}/albums/${album.id}`)}
                                         src={album.coverUrl}
                                         alt={album.title}
                                         width={200}
@@ -196,7 +203,9 @@ const SingleAdminArtistPage = () => {
                                         <EmptyDescription>No albums found</EmptyDescription>
                                     </EmptyHeader>
                                     <EmptyContent>
-                                        <Button>Add new album</Button>
+                                        <Button onClick={() => router.push(`/admin/artists/${normalizedArtistId}/albums/create`)}>
+                                            Add new album
+                                        </Button>
                                     </EmptyContent>
                                 </Empty>
                             )

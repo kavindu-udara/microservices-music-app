@@ -1,6 +1,7 @@
 import { FastifyPluginAsync } from 'fastify';
-import { createAlbum } from '../controllers/album.controller';
+import { createAlbum, getAlbumById } from '../controllers/album.controller';
 
 export const albumRoutes : FastifyPluginAsync = async (fastify, opts) => {
-    fastify.post('/album', createAlbum); 
+    fastify.post('/album', createAlbum);
+    fastify.get('/album/:id', getAlbumById);
 }

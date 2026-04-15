@@ -122,21 +122,6 @@ export const getAllArtists = async (
       JSON.stringify({ artists, message: "Artists fetched successfully" }),
     );
 
-    // Publish event to Kafka
-    await request.server.kafka.push({
-      topic: "catalog-events",
-      partition: 0,
-      key: String(Date.now()),
-      payload: JSON.stringify({
-        eventId: crypto.randomUUID(),
-        eventType: "artists.fetched", // not "artist.created"
-        occurredAt: new Date().toISOString(),
-        producer: "catalog-service",
-        schemaVersion: 1,
-        data: { count: artists.length },
-      }),
-    });
-
     reply.send({ artists, message: "Artists fetched successfully" });
   } catch (error) {
     reply.code(500).send({ error: "Failed to fetch artists" });
