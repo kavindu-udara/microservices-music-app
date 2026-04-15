@@ -6,7 +6,8 @@
   "type": "module",
   "exports": {
     "./prisma": "./prisma.ts",
-    "./schema": "./schema.ts"
+    "./schema": "./schema.ts",
+    "./upload-track": "./upload-track.ts"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -23,6 +24,7 @@
   "dependencies": {
     "@prisma/adapter-pg": "^7.7.0",
     "@prisma/client": "^7.7.0",
+    "@supabase/supabase-js": "^2.103.0",
     "dotenv": "^17.4.1",
     "pg": "^8.20.0",
     "zod": "^4.3.6"

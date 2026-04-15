@@ -4,12 +4,21 @@ import { albumRoutes } from "./routes/album.route";
 import { artistRoutes } from "./routes/artist.route";
 import fastifyRedis from "@fastify/redis";
 import { fastifyKafka } from "@fastify/kafka";
+import { fastifyMultipart } from "@fastify/multipart";
 import { countryRoutes } from "./routes/country.route";
 
 const app = fastify({
   logger: {
     level: process.env.NODE_ENV === "production" ? "info" : "debug",
     transport: { target: "pino-pretty" },
+  },
+});
+
+// multipart
+await app.register(fastifyMultipart, {
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10MB
+    files: 1,
   },
 });
 
