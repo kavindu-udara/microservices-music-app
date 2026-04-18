@@ -1,8 +1,35 @@
+"use client";
 import { Button } from "@/components/ui/button";
+import apiClient from "@/lib/axios";
+import useAuthStore from "@/lib/store";
+import { Account } from "@/types";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import Image from "next/image";
+import { useSearchParams } from "next/navigation";
+import { useCallback, useEffect } from "react";
 
 export default function HomePage() {
+
+  const setUser = useAuthStore((s) => s.setUser);
+
+  const handleLoginSuccess = useCallback((user: Account) => {
+    setUser(user);
+  }, [setUser]);
+
+  const searchParams = useSearchParams();
+  const loginMethod = searchParams.get("loginMethod");
+
+  useEffect(() => {
+    if (loginMethod === "google") {
+      apiClient.get("/auth/account").then((response) => {
+        handleLoginSuccess(response.data.account);
+        console.log("Account info:", response.data);
+      }).catch((error) => {
+        console.error("Failed to fetch account info:", error.response?.data || error.message);
+      });
+    }
+  }, [loginMethod, handleLoginSuccess]);
+
   return (
     <div className="flex flex-col gap-5 p-10">
       <div className="flex flex-col gap-5">
@@ -35,7 +62,7 @@ export default function HomePage() {
           </div>
         </div>
         <div className="flex flex-wrap">
-        <ArtistCard />
+          <ArtistCard />
         </div>
       </div>
     </div>

@@ -15,7 +15,6 @@ const googleCallbackController = async (
   reply: FastifyReply,
 ) => {
   try {
-
     const tokenResult =
       await request.server.googleOAuth2.getAccessTokenFromAuthorizationCodeFlow(
         request,
@@ -109,9 +108,9 @@ const googleCallbackController = async (
     });
 
     const redirectUrl =
-      process.env.FRONTEND_LOGIN_SUCCESS_URL || "http://localhost:3000";
+      process.env.FRONTEND_LOGIN_SUCCESS_URL ||
+      "http://localhost:3000?loginMethod=google";
     return reply.redirect(redirectUrl);
-    
   } catch (error: any) {
     request.log.error(error);
     const failUrl =

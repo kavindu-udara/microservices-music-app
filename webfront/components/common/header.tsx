@@ -5,8 +5,12 @@ import {
     InputGroupAddon,
     InputGroupInput,
 } from "@/components/ui/input-group";
+import useAuthStore from "@/lib/store";
 
 const Header = () => {
+
+    const user = useAuthStore((state) => state.user);
+
     return (
         <header className=" text-white p-4 w-full flex justify-between items-center">
             <div className="flex gap-4">
@@ -20,8 +24,18 @@ const Header = () => {
                         <SearchIcon />
                     </InputGroupAddon>
                 </InputGroup>
-                <Button variant="secondary">Login</Button>
-                <Button>Create free Account</Button>
+                {
+                    !user ? (
+                        <>
+                            <Button variant="secondary">Login</Button>
+                            <Button>Create free Account</Button>
+                        </>
+                    ) : (
+                        <Button>
+                            {user.firstName} {user.lastName}
+                        </Button>
+                    )
+                }
             </div>
         </header>
     );
