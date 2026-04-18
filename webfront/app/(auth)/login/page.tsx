@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Field, FieldError, FieldLabel } from '@/components/ui/field';
 import PasswordInputGroup from '@/components/inputs/password-input-group';
-import React, { ChangeEvent, useCallback } from "react";
+import React, { ChangeEvent } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import * as z from "zod";
 import apiClient from "@/lib/axios";

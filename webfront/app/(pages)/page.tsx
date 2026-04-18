@@ -1,8 +1,8 @@
-import { Button } from "@/components/ui/button";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import Image from "next/image";
 
 export default function HomePage() {
+
   return (
     <div className="flex flex-col gap-5 p-10">
       <div className="flex flex-col gap-5">
@@ -35,7 +35,7 @@ export default function HomePage() {
           </div>
         </div>
         <div className="flex flex-wrap">
-        <ArtistCard />
+          <ArtistCard />
         </div>
       </div>
     </div>
