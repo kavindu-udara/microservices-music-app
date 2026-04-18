@@ -159,7 +159,7 @@ const AdminRegisterPage = () => {
                             name='confirmPassword'
                             value={formData.confirmPassword}
                             onChange={onChange}
-                           ariaInvalid={!!formErrors.confirmPassword}
+                            ariaInvalid={!!formErrors.confirmPassword}
                             required
                         />
                         <FieldError errors={formErrors.confirmPassword ? [{ message: formErrors.confirmPassword }] : undefined} />
@@ -169,6 +169,8 @@ const AdminRegisterPage = () => {
                 <CardFooter className='flex flex-col'>
                     <Button className='w-full'>Register</Button>
                     <Button type="button" variant='outline' className='w-full mt-2' onClick={() => router.push("/login")}>Login</Button>
+                    <p className="py-3 text-gray-400">or</p>
+                    <Button type="button" variant='outline' className='w-full' onClick={() => window.location.assign(`${api}/auth/google`)}>Continue with Google</Button>
                 </CardFooter>
             </Card>
         </form>
