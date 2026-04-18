@@ -12,13 +12,34 @@ datasource db {
   provider = "postgresql"
 }
 
+enum Role {
+  USER
+  ADMIN
+}
+
 model User {
   fname String
   lname String
+  role Role @default(USER)
   email String @unique
   verified Boolean @default(false)
-  password String
+  password String?
   id    Int    @id @default(autoincrement())
+
+  accounts Account[]
+}
+
+model Account {
+  id Int @id @default(autoincrement())
+  userId Int
+  provider String
+  providerAccountId String
+  refreshToken String?
+  accessToken String?
+
+  User User @relation(fields: [userId], references: [id])
+
+  @@unique([provider, providerAccountId])
 }
 
 model Country {

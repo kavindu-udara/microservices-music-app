@@ -150,7 +150,10 @@ const SingleAlbumPage = () => {
 
         <div className='mt-10 flex items-center justify-between gap-4'>
           <h2 className='text-xl font-semibold'>Tracks</h2>
-          <Button size={'sm'} variant={'outline'}>
+          <Button
+            size={'sm'}
+            onClick={() => router.push(`/admin/artists/${artistId}/albums/${albumId}/create`)}
+          >
             Add Track
           </Button>
         </div>
@@ -185,7 +188,11 @@ const SingleAlbumPage = () => {
                 <EmptyDescription>No tracks found for this album</EmptyDescription>
               </EmptyHeader>
               <EmptyContent>
-                <Button variant={'outline'}>Add first track</Button>
+                <Button
+                  onClick={() => router.push(`/admin/artists/${artistId}/albums/${albumId}/create`)}
+                >
+                  Add first track
+                </Button>
               </EmptyContent>
             </Empty>
           )}

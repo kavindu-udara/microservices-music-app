@@ -25,7 +25,9 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 type FormErrors = Partial<Record<keyof FormData, string>>;
 
-const AdminLogin = () => {
+const api = process.env.NEXT_PUBLIC_API_GATEWAY_URL || "http://localhost:8080";
+
+const UserLogin = () => {
 
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -124,10 +126,12 @@ const AdminLogin = () => {
                 <CardFooter className='flex flex-col'>
                     <Button className='w-full'>Login</Button>
                     <Button type="button" variant='outline' className='w-full mt-2' onClick={() => router.push("/register")}>Register</Button>
+                    <p className="py-3 text-gray-400">or</p>
+                    <Button type="button" variant='outline' className='w-full' onClick={() => window.location.assign(`${api}/auth/google`)}>Continue with Google</Button>
                 </CardFooter>
             </Card>
         </form>
     )
 }
 
-export default AdminLogin
+export default UserLogin
