@@ -3,10 +3,9 @@ import jwt from '@fastify/jwt';
 import { loginRoutes } from './routes/login.route';
 import { registerRoutes } from './routes/register.route';
 import { accountRoutes } from './routes/account.route';
-import cookie from '@fastify/cookie';
-import fastifyKafka from '@fastify/kafka';
 import {fastifyOauth2} from "@fastify/oauth2";
 import { oauthRoutes } from './routes/oauth.route';
+import 'dotenv/config';
 
 const app = fastify({
   logger: {
@@ -18,6 +17,7 @@ const app = fastify({
 // OAuth2 Setup for Google
 app.register(fastifyOauth2, {
   name: 'googleOAuth2',
+  scope: ['email', 'profile'],
   credentials: {
     client: {
       id: process.env.GOOGLE_CLIENT_ID || "your-google-client-id",
@@ -25,19 +25,8 @@ app.register(fastifyOauth2, {
     },
     auth: fastifyOauth2.GOOGLE_CONFIGURATION,
   },
-  startRedirectPath: '/auth/google',
-  callbackUri: `${process.env.GOOGLE_CALLBACK_URL || 'http://localhost:3001'}/auth/google/callback`,
-});
-
-// kafka
-await app.register(fastifyKafka, {
-  clientId: 'auth-service',
-  brokers: [process.env.KAFKA_BROKER || 'localhost:9094'],
-});
-
-// cookie setup
-app.register(cookie, {
-  secret: process.env.COOKIE_SECRET || "dev-cookie-secret-change-me",
+  startRedirectPath: '/google',
+  callbackUri: `${process.env.GOOGLE_CALLBACK_URL || 'http://localhost:3001'}/google/callback`,
 });
 
 // JWT Setup

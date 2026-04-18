@@ -15,6 +15,7 @@ const googleCallbackController = async (
   reply: FastifyReply,
 ) => {
   try {
+
     const tokenResult =
       await request.server.googleOAuth2.getAccessTokenFromAuthorizationCodeFlow(
         request,
@@ -43,6 +44,7 @@ const googleCallbackController = async (
     if (!profile.email) {
       return reply.code(400).send({ error: "Google account has no email" });
     }
+
     const provider = "google";
     const providerAccountId = profile.sub;
 
@@ -55,6 +57,7 @@ const googleCallbackController = async (
       },
       include: { User: true },
     });
+
     let user = existingAccount?.User ?? null;
 
     if (!user) {
@@ -108,6 +111,7 @@ const googleCallbackController = async (
     const redirectUrl =
       process.env.FRONTEND_LOGIN_SUCCESS_URL || "http://localhost:3000";
     return reply.redirect(redirectUrl);
+    
   } catch (error: any) {
     request.log.error(error);
     const failUrl =
