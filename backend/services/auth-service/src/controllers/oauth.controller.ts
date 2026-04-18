@@ -93,6 +93,7 @@ const googleCallbackController = async (
         firstName: user.fname,
         lastName: user.lname,
         email: user.email,
+        role : user.role,
       },
       {
         expiresIn: process.env.JWT_EXPIRES_IN || "1h",
