@@ -6,6 +6,7 @@ import React, { use, useEffect } from 'react'
 const AuthInitializer = () => {
     useEffect(() => {
         apiClient.get("/auth/account").then((response) => {
+            console.log("Fetched account info:", response.data);
             useAuthStore.setState({ user: response.data.account });
         }).catch((error) => {
             useAuthStore.setState({ user: null });
