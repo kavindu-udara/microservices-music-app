@@ -6,9 +6,11 @@ import {
     InputGroupInput,
 } from "@/components/ui/input-group";
 import useAuthStore from "@/lib/store";
+import { useRouter } from "next/navigation";
 
 const Header = () => {
 
+    const router = useRouter();
     const user = useAuthStore((state) => state.user);
 
     return (
@@ -27,8 +29,8 @@ const Header = () => {
                 {
                     !user ? (
                         <>
-                            <Button variant="secondary">Login</Button>
-                            <Button>Create free Account</Button>
+                            <Button variant="secondary" onClick={() => router.push("/login")}>Login</Button>
+                            <Button onClick={() => router.push("/register")} >Create free Account</Button>
                         </>
                     ) : (
                         <Button>
