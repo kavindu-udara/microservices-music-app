@@ -34,3 +34,19 @@ export const registerSchema = z.object({
   message: "Passwords don't match",
   path: ["confirmPassword"],
 });
+
+export const createTrackSchema = z.object({
+  title: z.string().min(1, "Track title is required").trim(),
+  albumId: z.number().int().positive().optional(),
+  language: z.string().min(1, "Language is required").trim(),
+  isExplicit: z.boolean().optional(),
+  isPublished: z.boolean().optional(),
+  artistIds: z.array(z.number().int().positive()).min(1, "At least one artist ID is required"),
+  genreIds: z.array(z.number().int().positive()).optional(),
+  file: z
+    .instanceof(File, { message: "Audio file is required" })
+    .refine(
+      (file) => file.type === "audio/mpeg" || file.name.toLowerCase().endsWith(".mp3"),
+      { message: "File must be an MP3" }
+    ),
+});

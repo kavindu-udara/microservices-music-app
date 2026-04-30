@@ -84,8 +84,7 @@ model Track {
   id Int @id @default(autoincrement())
   title String
   albumId Int? 
-  duration Int
-  audioUrl String
+  audioUrl String?
   language String
   isExplicit Boolean
   isPublished Boolean @default(false)
