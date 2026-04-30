@@ -22,6 +22,11 @@ const navItems = [
     name: 'Tracks',
     icon: <MusicIcon />,
     path: '/admin/tracks'
+  },
+  {
+    name: 'Genres',
+    icon: <BadgeCentIcon />,
+    path: '/admin/genres'
   }
 ];
 
