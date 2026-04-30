@@ -2,6 +2,7 @@
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import apiClient from '@/lib/axios';
+import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
 
 type Genre = {
@@ -31,6 +32,7 @@ const tableHeadings = [
 ];
 
 const GenresPage = () => {
+  const router = useRouter();
 
   const [genres, setGenres] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -51,7 +53,7 @@ const GenresPage = () => {
   return (
     <div className='p-5 flex flex-col gap-5'>
       <div className="flex justify-end">
-        <Button>Add New Genre</Button>
+        <Button onClick={() =>router.push("/admin/genres/create")} >Add New Genre</Button>
       </div>
 
 {/* table */}
