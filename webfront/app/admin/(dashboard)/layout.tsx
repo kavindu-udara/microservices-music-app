@@ -1,4 +1,4 @@
-import AdminLeftSideNavBar from '@/components/admin/admin-eft-side-nav-bar'
+import AdminLeftSideNavBar from '@/components/admin/admin-left-side-nav-bar'
 import AdminHeader from '@/components/admin/admin-header'
 import React, { ReactNode } from 'react'
 

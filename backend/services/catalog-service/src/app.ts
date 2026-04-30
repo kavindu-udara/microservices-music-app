@@ -6,6 +6,7 @@ import fastifyRedis from "@fastify/redis";
 import { fastifyKafka } from "@fastify/kafka";
 import { fastifyMultipart } from "@fastify/multipart";
 import { countryRoutes } from "./routes/country.route";
+import { genreRoutes } from "./routes/genre.route";
 
 const app = fastify({
   logger: {
@@ -16,6 +17,7 @@ const app = fastify({
 
 // multipart
 await app.register(fastifyMultipart, {
+  attachFieldsToBody: "keyValues",
   limits: {
     fileSize: 10 * 1024 * 1024, // 10MB
     files: 1,
@@ -50,6 +52,8 @@ app.register(albumRoutes);
 app.register(artistRoutes);
 // Country routes
 app.register(countryRoutes);
+// Genre routes
+app.register(genreRoutes);
 
 app.get("/health", async (request, reply) => {
   return { status: "ok", timestamp: Date.now() };
