@@ -3,6 +3,7 @@ import path from "path";
 import fs from "fs/promises";
 import { pipeline } from "stream/promises";
 import { createWriteStream } from "fs";
+import { addTrack, getAllTracks, Track } from "../store/tracks";
 
 const UPLOAD_DIR = path.resolve(process.env.UPLOAD_DIR || "./uploads");
 const MAX_FILE_SIZE_BYTES = 50 * 1024 * 1024;
@@ -22,6 +23,13 @@ const ALLOWED_EXTENSIONS = new Set([
 
 export const trackRoutes: FastifyPluginAsync = async (app) => 
 {
+
+    app.get("/api/tracks", 
+        async () => {
+            return getAllTracks();
+        }
+    );
+
     app.post("/api/tracks/upload", { bodyLimit: MAX_FILE_SIZE_BYTES }, async (req, reply) => {
         try {
             await fs.mkdir(UPLOAD_DIR, { recursive: true });
@@ -105,7 +113,7 @@ export const trackRoutes: FastifyPluginAsync = async (app) =>
                 req.log.warn("Failed to extract metadata");
             }
 
-            const track = {
+            const track: Track = {
                 id,
                 originalFilename,
                 storagePath: filePath,
@@ -115,6 +123,8 @@ export const trackRoutes: FastifyPluginAsync = async (app) =>
                 status: "uploaded",
                 createdAt: new Date().toISOString()
             }
+
+            addTrack(track);
 
             return reply.code(201).send(track);
 
