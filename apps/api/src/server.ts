@@ -3,6 +3,8 @@ import Fastify from "fastify";
 import cors from "@fastify/cors";
 import multipart from "@fastify/multipart";
 import { trackRoutes } from "./routes/tracks";
+import fastifyStatic from "@fastify/static";
+import path from "path";
 
 const app = Fastify({
   logger: true,
@@ -26,6 +28,17 @@ app.register(multipart, {
         files: 1
     }
 });
+
+const storageDriver = process.env.STORAGE_DRIVER ?? "local";
+
+if(storageDriver === "local"){
+  const uploadDir = path.resolve(process.env.UPLOAD_DIR ?? "./uploads");
+
+    app.register(fastifyStatic, {
+        root: uploadDir,
+        prefix: "/files/",
+    });
+}
 
 app.register(trackRoutes);
 

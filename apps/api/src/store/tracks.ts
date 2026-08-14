@@ -1,24 +1,24 @@
 export type Track = {
     id: string,
-    originalFilename: string,
-    storagePath: string,
+    originalFileName: string,
+    storageKey: string,
     mimeType: string,
     sizeBytes: number,
     durationSec: number | null,
-    status: "uploaded",
+    status: "uploaded" | "queued" | "analyzing" | "analyzed" | "failed",
     createdAt: string
 }
 
-let tracks: Track[] = [];
+const tracks = new Map<string, Track>();
 
-export const getAllTracks = () => {
-    return tracks;
+export function saveTrack(track: Track) {
+  tracks.set(track.id, track);
 }
 
-export const addTrack = (track: Track) => {
-    tracks.push(track);
+export function getTracks() {
+  return Array.from(tracks.values());
 }
 
-export const getTrackById = (id: string) => {
-    return tracks.find(track => track.id === id);
+export function getTrackById(id: string) {
+  return tracks.get(id);
 }

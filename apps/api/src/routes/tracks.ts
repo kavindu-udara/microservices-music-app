@@ -3,136 +3,157 @@ import path from "path";
 import fs from "fs/promises";
 import { pipeline } from "stream/promises";
 import { createWriteStream } from "fs";
-import { addTrack, getAllTracks, Track } from "../store/tracks";
+import { getTracks, saveTrack, Track } from "../store/tracks";
+import { storageService } from "../storage";
 
-const UPLOAD_DIR = path.resolve(process.env.UPLOAD_DIR || "./uploads");
+const TMP_DIR = path.resolve(process.env.TMP_DIR ?? "./tmp");
 const MAX_FILE_SIZE_BYTES = 50 * 1024 * 1024;
 
 const ALLOWED_MIME_TYPES = new Set([
-    "audio/mpeg",
-    "audio/wav",
-    "audio/x-wav",
-    "audio/mp3"
+  "audio/mpeg",
+  "audio/wav",
+  "audio/x-wav",
+  "audio/mp3",
 ]);
 
-const ALLOWED_EXTENSIONS = new Set([
-    ".mp3",
-    ".wav",
-    ".mpeg"
-]);
+const ALLOWED_EXTENSIONS = new Set([".mp3", ".wav", ".mpeg"]);
 
-export const trackRoutes: FastifyPluginAsync = async (app) => 
-{
+export const trackRoutes: FastifyPluginAsync = async (app) => {
+  app.post(
+    "/api/tracks/upload",
+    { bodyLimit: MAX_FILE_SIZE_BYTES },
+    async (req, reply) => {
+    let tempPath: string | null = null;
 
-    app.get("/api/tracks", 
-        async () => {
-            return getAllTracks();
-        }
+    try {
+      if (!req.isMultipart()) {
+        return reply.code(400).send({
+          error: "Request must be multipart/form-data",
+        });
+      }
+
+      const file = await req.file();
+
+      if (!file) {
+        return reply.code(400).send({
+          error: 'No file uploaded. Expected field name "file".',
+        });
+      }
+
+      const originalFileName = file.filename ?? "unknown";
+      const ext = path.extname(originalFileName).toLowerCase();
+
+      const isAllowedMime = ALLOWED_MIME_TYPES.has(file.mimetype);
+      const isAllowedExtension = ALLOWED_EXTENSIONS.has(ext);
+
+      if (!isAllowedMime || !isAllowedExtension) {
+        return reply.code(415).send({
+          error:
+            "Unsupported file type. Please upload .mp3, .wav, or .m4a audio.",
+        });
+      }
+
+      await fs.mkdir(TMP_DIR, { recursive: true });
+
+      const id = crypto.randomUUID();
+      const safeTempName = `${id}${ext}`;
+
+      tempPath = path.join(TMP_DIR, safeTempName);
+
+      await pipeline(file.file, createWriteStream(tempPath));
+
+      if (file.file.truncated) {
+        await fs.unlink(tempPath).catch(() => {});
+
+        return reply.code(413).send({
+          error: "File too large.",
+        });
+      }
+
+      const stats = await fs.stat(tempPath);
+
+      if (stats.size > MAX_FILE_SIZE_BYTES) {
+        await fs.unlink(tempPath).catch(() => {});
+
+        return reply.code(413).send({
+          error: "File too large.",
+        });
+      }
+
+      let durationSec: number | null = null;
+
+      try {
+        const { parseFile } = await import("music-metadata");
+
+        const metadata = await parseFile(tempPath);
+
+        durationSec = metadata.format.duration ?? null;
+      } catch (err) {
+        req.log.warn(err, "Failed to extract audio metadata");
+      }
+
+      const storageKey = `tracks/${id}${ext}`;
+
+      await storageService.saveFile({
+        key: storageKey,
+        filePath: tempPath,
+        contentType: file.mimetype,
+      });
+
+      await fs.unlink(tempPath).catch(() => {});
+      tempPath = null;
+
+      const url = await storageService.getSignedUrl(storageKey, 3600);
+
+      const track: Track = {
+        id,
+        originalFileName,
+        storageKey,
+        mimeType: file.mimetype,
+        sizeBytes: stats.size,
+        durationSec,
+        status: "uploaded" as const,
+        createdAt: new Date().toISOString(),
+      };
+
+      saveTrack(track);
+
+      return reply.code(201).send({
+        track: {
+          ...track,
+          url,
+        },
+      });
+    } catch (err) {
+      if (tempPath) {
+        await fs.unlink(tempPath).catch(() => {});
+      }
+
+      req.log.error(err);
+
+      return reply.code(500).send({
+        error: "Upload failed",
+      });
+    }
+    },
+  );
+
+  app.get("/api/tracks", async () => {
+    const tracks = getTracks();
+
+    const tracksWithUrl = await Promise.all(
+      tracks.map(async (track) => {
+        const url = await storageService.getSignedUrl(track.storageKey, 3600);
+
+        return {
+          ...track,
+          url,
+        };
+      }),
     );
 
-    app.post("/api/tracks/upload", { bodyLimit: MAX_FILE_SIZE_BYTES }, async (req, reply) => {
-        try {
-            await fs.mkdir(UPLOAD_DIR, { recursive: true });
-
-            const id = crypto.randomUUID();
-            let originalFilename = "unknown";
-            let ext = "";
-            let filePath = "";
-            let mimeType = "";
-
-            if(req.isMultipart()){
-                const file = await req.file();
-
-                if(!file){
-                    return reply.code(400).send({
-                        error: "No file uploaded"
-                    });
-                }
-
-                originalFilename = file.filename ?? "unknown";
-                ext = path.extname(originalFilename).toLowerCase();
-                mimeType = file.mimetype;
-
-                const isAllowedMimeType = ALLOWED_MIME_TYPES.has(file.mimetype);
-                const isAllowedExtension = ALLOWED_EXTENSIONS.has(ext);
-
-                if(!isAllowedMimeType || !isAllowedExtension){
-                    return reply.code(415).send({
-                        error: "Invalid file type. Only mp3, wav, and mpeg files are allowed."
-                    });
-                }
-
-                filePath = path.join(UPLOAD_DIR, `${id}${ext}`);
-
-                await pipeline(file.file, createWriteStream(filePath));
-
-                const multipartFile = file as typeof file & { truncated?: boolean };
-
-                if(multipartFile.truncated){
-                    await fs.unlink(filePath).catch(() => {});
-
-                    return reply.code(413).send({
-                        error: "File size exceeds the limit of 50MB"
-                    });
-                }
-            } else {
-                const contentType = String(req.headers["content-type"] ?? "").split(";")[0].trim().toLowerCase();
-                const rawBody = req.body;
-
-                if(!Buffer.isBuffer(rawBody)){
-                    return reply.code(415).send({
-                        error: "Unsupported media type. Send audio/mpeg, audio/wav, or multipart/form-data."
-                    });
-                }
-
-                mimeType = contentType;
-
-                if(!ALLOWED_MIME_TYPES.has(contentType)){
-                    return reply.code(415).send({
-                        error: "Invalid file type. Only mp3, wav, and mpeg files are allowed."
-                    });
-                }
-
-                const extensionFromMimeType = contentType === "audio/wav" ? ".wav" : ".mp3";
-                ext = extensionFromMimeType;
-                originalFilename = `upload${ext}`;
-                filePath = path.join(UPLOAD_DIR, `${id}${ext}`);
-
-                await fs.writeFile(filePath, rawBody);
-            }
-
-            const stats = await fs.stat(filePath);
-
-            let durationSec: number | null = null;
-
-            try {
-                const {parseFile} = await import("music-metadata");
-                const metadata = await parseFile(filePath);
-                durationSec = metadata.format.duration ?? null;
-            } catch (error) {
-                req.log.warn("Failed to extract metadata");
-            }
-
-            const track: Track = {
-                id,
-                originalFilename,
-                storagePath: filePath,
-                mimeType,
-                sizeBytes: stats.size,
-                durationSec,
-                status: "uploaded",
-                createdAt: new Date().toISOString()
-            }
-
-            addTrack(track);
-
-            return reply.code(201).send(track);
-
-        } catch (error : any) {
-            req.log.error("Error occurred while uploading file:", error);
-            return reply.code(500).send({
-                error: "Internal server error"
-            });
-        }
-    })
-}
+    return {
+      tracks: tracksWithUrl,
+    };
+  });
+};
