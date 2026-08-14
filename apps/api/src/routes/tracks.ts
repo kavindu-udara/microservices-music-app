@@ -19,7 +19,10 @@ const ALLOWED_MIME_TYPES = new Set([
 const ALLOWED_EXTENSIONS = new Set([".mp3", ".wav", ".mpeg"]);
 
 export const trackRoutes: FastifyPluginAsync = async (app) => {
-  app.post("/api/tracks/upload", async (req, reply) => {
+  app.post(
+    "/api/tracks/upload",
+    { bodyLimit: MAX_FILE_SIZE_BYTES },
+    async (req, reply) => {
     let tempPath: string | null = null;
 
     try {
@@ -132,7 +135,8 @@ export const trackRoutes: FastifyPluginAsync = async (app) => {
         error: "Upload failed",
       });
     }
-  });
+    },
+  );
 
   app.get("/api/tracks", async () => {
     const tracks = getTracks();
